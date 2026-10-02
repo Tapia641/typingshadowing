@@ -124,14 +124,12 @@
     audioCtx: null,
 
     init() {
-      // Find high quality English voice
       if (this.synth) {
         const loadVoices = () => {
           const voices = this.synth.getVoices();
-          // Prefer US or GB natural English voices
           this.voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('David') || v.name.includes('Zira')))
-                    || voices.find(v => v.lang.startsWith('en'))
-                    || null;
+            || voices.find(v => v.lang.startsWith('en'))
+            || null;
         };
         loadVoices();
         if (this.synth.onvoiceschanged !== undefined) {
@@ -140,21 +138,19 @@
       }
     },
 
-    // Speak a word or phrase with high quality settings
     speak(text) {
       if (!this.synth) return;
       try {
-        // Clean word of extraneous punctuation for cleaner pronunciation
         const cleanWord = text.replace(/[^a-zA-Z0-9']/g, '').trim();
         if (!cleanWord) return;
 
-        this.synth.cancel(); // Cancel any prior utterance
+        this.synth.cancel();
         const utterance = new SpeechSynthesisUtterance(cleanWord);
         utterance.lang = 'en-US';
         if (this.voice) {
           utterance.voice = this.voice;
         }
-        utterance.rate = 0.95; // Slightly natural pace for learning
+        utterance.rate = 0.95;
         utterance.pitch = 1.0;
         this.synth.speak(utterance);
       } catch (e) {
@@ -162,7 +158,6 @@
       }
     },
 
-    // Subtle audio click effect for typing feedback
     playKeySound(type = 'click') {
       try {
         if (!this.audioCtx) {
@@ -259,13 +254,11 @@
   }
 
   function setupEventListeners() {
-    // Theme toggle
     dom.themeToggle.addEventListener('click', () => {
       const newTheme = state.theme === 'light' ? 'dark' : 'light';
       applyTheme(newTheme);
     });
 
-    // Level tabs
     dom.levelTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const level = tab.getAttribute('data-level');
@@ -280,23 +273,19 @@
       });
     });
 
-    // Start practice button in hero
     dom.btnStart.addEventListener('click', () => {
       dom.welcomeSection.style.display = 'none';
       dom.practiceArena.style.display = 'block';
       focusInput();
     });
 
-    // Hidden input typing listener
     dom.hiddenInput.addEventListener('input', handleInput);
     dom.hiddenInput.addEventListener('keydown', handleKeyDown);
 
-    // Keep input focused when clicking on the arena
     dom.practiceArena.addEventListener('click', () => {
       focusInput();
     });
 
-    // Sidebar controls
     dom.btnRepeat.addEventListener('click', () => {
       resetSession();
       loadText();
@@ -312,7 +301,6 @@
       state.autoContinue = e.target.checked;
     });
 
-    // Modal controls
     dom.modalRepeat.addEventListener('click', () => {
       dom.modal.style.display = 'none';
       resetSession();
@@ -326,7 +314,6 @@
       focusInput();
     });
 
-    // Virtual keyboard click interactivity
     dom.keys.forEach(key => {
       key.addEventListener('click', () => {
         const k = key.getAttribute('data-key');
@@ -337,6 +324,7 @@
               dom.hiddenInput.value = state.currentInput;
               renderFeedback();
               updateVirtualKeyboard();
+              updateStatsDisplay();
             }
           } else if (k === ' ' || k.length === 1) {
             simulateKeyInput(k);
@@ -363,7 +351,6 @@
 
     dom.textTitle.textContent = `${state.level} · ${currentItem.title}`;
 
-    // Split text into words (clean split preserving spaces)
     const rawWords = currentItem.text.trim().split(/\s+/);
     state.words = rawWords;
     state.currentWordIndex = 0;
@@ -406,7 +393,6 @@
         el.classList.add('word--completed');
       } else if (index === state.currentWordIndex) {
         el.classList.add('word--current');
-        // Scroll into view if needed
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
       } else {
         el.classList.add('word--upcoming');
@@ -457,24 +443,31 @@
   // 7. INPUT & TYPING VALIDATION ENGINE
   // ═══════════════════════════════════════════════════════════════════
 
+  // Comprueba si el texto ingresado actualmente contiene algún carácter erróneo
+  function hasError(input, targetWord) {
+    if (!input) return false;
+    for (let i = 0; i < input.length; i++) {
+      if (i >= targetWord.length || input[i] !== targetWord[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   function handleKeyDown(e) {
     if (state.isCompleted) return;
 
-    // Start timer on first keystroke
     if (!state.startTime) {
       startTimer();
     }
 
-    // Highlight pressed key on virtual keyboard
     highlightKeyOnPress(e.key);
 
-    // If Backspace
     if (e.key === 'Backspace') {
       audio.playKeySound('click');
-      return; // Let standard input handler update currentInput
+      return;
     }
 
-    // Space handling
     if (e.key === ' ') {
       e.preventDefault();
       attemptAdvanceWord();
@@ -484,13 +477,35 @@
   function handleInput(e) {
     if (state.isCompleted) return;
 
-    const val = dom.hiddenInput.value;
-    state.totalKeystrokes++;
-
     const targetWord = state.words[state.currentWordIndex] || '';
+    let val = dom.hiddenInput.value;
 
-    // Check if the current typed character is correct or mistake
+    // Verificar si ya existía un error antes de esta pulsación
+    const currentlyHasError = hasError(state.currentInput, targetWord);
+
+    // 1. Si YA tiene 1 error y el usuario intenta seguir escribiendo -> BLOQUEAR
+    if (currentlyHasError && val.length > state.currentInput.length) {
+      dom.hiddenInput.value = state.currentInput; // Restaura el texto impidiendo avanzar
+      audio.playKeySound('error');
+      return;
+    }
+
+    // 2. Si el usuario borra con Backspace
+    if (val.length < state.currentInput.length) {
+      state.currentInput = val;
+      renderFeedback();
+      updateVirtualKeyboard();
+      updateStatsDisplay();
+      return;
+    }
+
+    // 3. Si el usuario escribe un nuevo carácter
     if (val.length > state.currentInput.length) {
+      // Limitar a escribir de 1 en 1 carácter por evento
+      val = state.currentInput + val.slice(state.currentInput.length, state.currentInput.length + 1);
+      dom.hiddenInput.value = val;
+
+      state.totalKeystrokes++;
       const typedChar = val[val.length - 1];
       const expectedChar = targetWord[val.length - 1];
 
@@ -500,18 +515,16 @@
       } else {
         state.errorsCount++;
         audio.playKeySound('error');
+        // A partir de este momento, hasError() devolverá true y bloqueará la siguiente tecla
       }
-    }
 
-    state.currentInput = val;
-    renderFeedback();
-    updateVirtualKeyboard();
-    updateStatsDisplay();
+      state.currentInput = val;
+      renderFeedback();
+      updateVirtualKeyboard();
+      updateStatsDisplay();
 
-    // Auto-advance if word is completely and accurately typed
-    if (val === targetWord) {
-      // If this is the last word, finish immediately
-      if (state.currentWordIndex === state.words.length - 1) {
+      // Avanza automáticamente sólo si la palabra es 100% correcta y es la última
+      if (val === targetWord && state.currentWordIndex === state.words.length - 1) {
         completeCurrentWord();
       }
     }
@@ -523,6 +536,12 @@
 
     if (char === ' ') {
       attemptAdvanceWord();
+      return;
+    }
+
+    // Si ya hay un error sin corregir, bloquea la simulación de entrada
+    if (hasError(state.currentInput, targetWord)) {
+      audio.playKeySound('error');
       return;
     }
 
@@ -554,10 +573,9 @@
     if (state.currentInput === targetWord) {
       completeCurrentWord();
     } else {
-      // Shake current word to indicate incomplete/wrong
       audio.playKeySound('error');
       dom.currentWord.classList.remove('shake');
-      void dom.currentWord.offsetWidth; // Trigger reflow
+      void dom.currentWord.offsetWidth;
       dom.currentWord.classList.add('shake');
     }
   }
@@ -565,7 +583,6 @@
   function completeCurrentWord() {
     const completedWord = state.words[state.currentWordIndex];
 
-    // Play pronunciation immediately (Typing Shadowing core feature!)
     audio.speak(completedWord);
 
     state.currentWordIndex++;
@@ -589,7 +606,6 @@
     stopTimer();
     updateStatsDisplay();
 
-    // Calculate final metrics
     const finalWPM = calculateWPM();
     const finalAcc = calculateAccuracy();
     const finalTime = formatTime(state.elapsedSeconds);
@@ -599,11 +615,9 @@
     dom.modalTime.textContent = finalTime;
     dom.modalErrors.textContent = state.errorsCount;
 
-    // Show completion modal
     setTimeout(() => {
       dom.modal.style.display = 'flex';
 
-      // If auto-continue is active, transition to next after 2.5s
       if (state.autoContinue) {
         setTimeout(() => {
           if (dom.modal.style.display !== 'none') {
@@ -639,7 +653,6 @@
   // ═══════════════════════════════════════════════════════════════════
 
   function updateVirtualKeyboard() {
-    // Clear all previous active keys
     dom.keys.forEach(k => k.classList.remove('active-key'));
 
     if (state.isCompleted) return;
@@ -648,15 +661,17 @@
     const typed = state.currentInput;
 
     let nextChar = '';
-    if (typed.length < targetWord.length) {
+    // Si hay un error activo, resalta la tecla Backspace para indicarle al usuario que borre
+    if (hasError(typed, targetWord)) {
+      nextChar = 'Backspace';
+    } else if (typed.length < targetWord.length) {
       nextChar = targetWord[typed.length];
     } else if (typed === targetWord && state.currentWordIndex < state.words.length - 1) {
-      nextChar = ' '; // Prompt spacebar
+      nextChar = ' ';
     }
 
     if (!nextChar) return;
 
-    // Find key element
     let targetKeyEl = null;
     const lowerChar = nextChar.toLowerCase();
 
@@ -706,7 +721,6 @@
   function calculateWPM() {
     if (state.elapsedSeconds < 1) return 0;
     const minutes = state.elapsedSeconds / 60;
-    // Standard WPM formula: (correct keystrokes / 5) / minutes
     const wordsTyped = (state.correctKeystrokes / 5);
     return Math.max(0, Math.round(wordsTyped / minutes));
   }
@@ -739,7 +753,6 @@
     init();
   }
 
-  // Expose namespace for debugging or external calls
   window.__TYPING_SHADOWING__ = {
     state,
     audio,
