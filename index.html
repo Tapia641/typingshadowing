@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Shadowing — Mejora tu inglés escribiendo lo que escuchas</title>
+  <meta name="description" content="Practica inglés con la técnica de Typing Shadowing: escribe lo que lees y escuchas simultáneamente para mejorar tu ortografía, escritura y comprensión auditiva.">
+  <link rel="stylesheet" href="css/styles.css?v=20261002">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="light">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">⌨</span>
+        <span class="brand-name">Typing<strong>Shadowing</strong></span>
+      </div>
+      <div class="header-controls">
+        <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+          <span class="theme-icon theme-icon--light">☀️</span>
+          <span class="theme-toggle-track">
+            <span class="theme-toggle-thumb"></span>
+          </span>
+          <span class="theme-icon theme-icon--dark">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ LEVEL NAV (MCER) ═══════════ -->
+  <nav class="level-nav" aria-label="Nivel de dificultad MCER">
+    <div class="level-nav-inner">
+      <button class="level-tab active" data-level="A1">
+        <span class="level-code">A1</span>
+        <span class="level-label">Básico</span>
+      </button>
+      <button class="level-tab" data-level="A2">
+        <span class="level-code">A2</span>
+        <span class="level-label">Elemental</span>
+      </button>
+      <button class="level-tab" data-level="B1">
+        <span class="level-code">B1</span>
+        <span class="level-label">Intermedio</span>
+      </button>
+      <button class="level-tab" data-level="B2">
+        <span class="level-code">B2</span>
+        <span class="level-label">Int. Alto</span>
+      </button>
+      <button class="level-tab" data-level="C1">
+        <span class="level-code">C1</span>
+        <span class="level-label">Avanzado</span>
+      </button>
+      <button class="level-tab" data-level="C2">
+        <span class="level-code">C2</span>
+        <span class="level-label">Maestría</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════ WELCOME (shown initially, hidden during practice) ═══════════ -->
+  <section class="welcome" id="welcomeSection">
+    <div class="welcome-inner">
+      <h1>Mejora tu inglés con la técnica de <em>Shadowing</em></h1>
+      <p class="welcome-subtitle">Escribe lo que lees y escuchas simultáneamente para mejorar tu escritura, ortografía y comprensión auditiva — todo desde tu navegador, sin subir archivos a ningún servidor.</p>
+      <div class="welcome-features">
+        <div class="feature-card">
+          <span class="feature-icon">🎧</span>
+          <h3>Escucha</h3>
+          <p>Al completar cada palabra, escucharás su pronunciación correcta de forma automática.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">✍️</span>
+          <h3>Escribe</h3>
+          <p>Practica con textos de clásicos literarios adaptados a tu nivel de inglés (A1 → C2).</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3>Mide</h3>
+          <p>Consulta tus estadísticas en tiempo real: velocidad, precisión y progreso.</p>
+        </div>
+      </div>
+      <button class="btn-start" id="btnStart">Comenzar a practicar</button>
+    </div>
+  </section>
+
+  <!-- ═══════════ PRACTICE ARENA ═══════════ -->
+  <main class="practice-arena" id="practiceArena" style="display:none;">
+    <div class="arena-layout">
+
+      <!-- ── LEFT: Text + Keyboard ── -->
+      <div class="arena-main">
+
+        <!-- Text display area -->
+        <section class="text-display" id="textDisplay">
+          <div class="text-info-bar">
+            <span class="text-title" id="textTitle">—</span>
+            <span class="text-progress" id="textProgress">0 / 0</span>
+          </div>
+          <div class="text-body" id="textBody">
+            <!-- words rendered here -->
+          </div>
+        </section>
+
+        <!-- Current word focus -->
+        <div class="current-word-area">
+          <div class="current-word-label">Escribe:</div>
+          <div class="current-word" id="currentWord">—</div>
+          <div class="typed-feedback" id="typedFeedback"></div>
+        </div>
+
+        <!-- Hidden real input -->
+        <input type="text" id="hiddenInput" class="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
+
+        <!-- Virtual keyboard -->
+        <section class="keyboard-section">
+          <div class="keyboard" id="virtualKeyboard">
+            <!-- Row 1 -->
+            <div class="kb-row">
+              <kbd data-key="`" class="key finger-pinky-l">`</kbd>
+              <kbd data-key="1" class="key finger-pinky-l">1</kbd>
+              <kbd data-key="2" class="key finger-ring-l">2</kbd>
+              <kbd data-key="3" class="key finger-middle-l">3</kbd>
+              <kbd data-key="4" class="key finger-index-l">4</kbd>
+              <kbd data-key="5" class="key finger-index-l">5</kbd>
+              <kbd data-key="6" class="key finger-index-r">6</kbd>
+              <kbd data-key="7" class="key finger-index-r">7</kbd>
+              <kbd data-key="8" class="key finger-middle-r">8</kbd>
+              <kbd data-key="9" class="key finger-ring-r">9</kbd>
+              <kbd data-key="0" class="key finger-pinky-r">0</kbd>
+              <kbd data-key="-" class="key finger-pinky-r">-</kbd>
+              <kbd data-key="=" class="key finger-pinky-r">=</kbd>
+              <kbd data-key="Backspace" class="key key-wide finger-pinky-r">⌫</kbd>
+            </div>
+            <!-- Row 2 -->
+            <div class="kb-row">
+              <kbd data-key="Tab" class="key key-tab finger-pinky-l">Tab</kbd>
+              <kbd data-key="q" class="key finger-pinky-l">Q</kbd>
+              <kbd data-key="w" class="key finger-ring-l">W</kbd>
+              <kbd data-key="e" class="key finger-middle-l">E</kbd>
+              <kbd data-key="r" class="key finger-index-l">R</kbd>
+              <kbd data-key="t" class="key finger-index-l">T</kbd>
+              <kbd data-key="y" class="key finger-index-r">Y</kbd>
+              <kbd data-key="u" class="key finger-index-r">U</kbd>
+              <kbd data-key="i" class="key finger-middle-r">I</kbd>
+              <kbd data-key="o" class="key finger-ring-r">O</kbd>
+              <kbd data-key="p" class="key finger-pinky-r">P</kbd>
+              <kbd data-key="[" class="key finger-pinky-r">[</kbd>
+              <kbd data-key="]" class="key finger-pinky-r">]</kbd>
+              <kbd data-key="\\" class="key key-tab finger-pinky-r">\</kbd>
+            </div>
+            <!-- Row 3 (home row) -->
+            <div class="kb-row">
+              <kbd data-key="CapsLock" class="key key-caps finger-pinky-l">Caps</kbd>
+              <kbd data-key="a" class="key finger-pinky-l home-key">A</kbd>
+              <kbd data-key="s" class="key finger-ring-l home-key">S</kbd>
+              <kbd data-key="d" class="key finger-middle-l home-key">D</kbd>
+              <kbd data-key="f" class="key finger-index-l home-key">F</kbd>
+              <kbd data-key="g" class="key finger-index-l">G</kbd>
+              <kbd data-key="h" class="key finger-index-r">H</kbd>
+              <kbd data-key="j" class="key finger-index-r home-key">J</kbd>
+              <kbd data-key="k" class="key finger-middle-r home-key">K</kbd>
+              <kbd data-key="l" class="key finger-ring-r home-key">L</kbd>
+              <kbd data-key=";" class="key finger-pinky-r home-key">;</kbd>
+              <kbd data-key="'" class="key finger-pinky-r">'</kbd>
+              <kbd data-key="Enter" class="key key-enter finger-pinky-r">Enter</kbd>
+            </div>
+            <!-- Row 4 -->
+            <div class="kb-row">
+              <kbd data-key="Shift" class="key key-shift finger-pinky-l">Shift</kbd>
+              <kbd data-key="z" class="key finger-pinky-l">Z</kbd>
+              <kbd data-key="x" class="key finger-ring-l">X</kbd>
+              <kbd data-key="c" class="key finger-middle-l">C</kbd>
+              <kbd data-key="v" class="key finger-index-l">V</kbd>
+              <kbd data-key="b" class="key finger-index-l">B</kbd>
+              <kbd data-key="n" class="key finger-index-r">N</kbd>
+              <kbd data-key="m" class="key finger-index-r">M</kbd>
+              <kbd data-key="," class="key finger-middle-r">,</kbd>
+              <kbd data-key="." class="key finger-ring-r">.</kbd>
+              <kbd data-key="/" class="key finger-pinky-r">/</kbd>
+              <kbd data-key="ShiftRight" class="key key-shift finger-pinky-r">Shift</kbd>
+            </div>
+            <!-- Row 5 (space) -->
+            <div class="kb-row">
+              <kbd data-key=" " class="key key-space finger-thumb">Espacio</kbd>
+            </div>
+            <!-- Finger guide overlay -->
+            <div class="finger-guide" id="fingerGuide">
+              <div class="hand hand-left">
+                <div class="finger-label fl-pinky">Meñique</div>
+                <div class="finger-label fl-ring">Anular</div>
+                <div class="finger-label fl-middle">Medio</div>
+                <div class="finger-label fl-index">Índice</div>
+              </div>
+              <div class="hand hand-right">
+                <div class="finger-label fr-index">Índice</div>
+                <div class="finger-label fr-middle">Medio</div>
+                <div class="finger-label fr-ring">Anular</div>
+                <div class="finger-label fr-pinky">Meñique</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ad slot bottom (subtle placeholder) -->
+        <div class="ad-slot ad-slot--bottom">
+          <span class="ad-label">ANUNCIO</span>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Stats sidebar ── -->
+      <aside class="stats-sidebar" id="statsSidebar">
+        <h2 class="sidebar-title">Estadísticas</h2>
+        <div class="stat-card">
+          <span class="stat-value" id="statWPM">0</span>
+          <span class="stat-label">WPM</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statAccuracy">100<small>%</small></span>
+          <span class="stat-label">Precisión</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statTime">0:00</span>
+          <span class="stat-label">Tiempo</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statWords">0<small>/0</small></span>
+          <span class="stat-label">Palabras</span>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-controls">
+          <button class="btn-secondary" id="btnRepeat">↻ Repetir texto</button>
+          <button class="btn-primary" id="btnNext">Siguiente texto →</button>
+          <div class="toggle-row">
+            <span class="toggle-label">Continuado automático</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleAuto">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Ad slot sidebar -->
+        <div class="ad-slot ad-slot--sidebar">
+          <span class="ad-label">ANUNCIO</span>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ═══════════ COMPLETION MODAL ═══════════ -->
+  <div class="modal-overlay" id="completionModal" style="display:none;">
+    <div class="modal-card">
+      <h2>¡Texto completado!</h2>
+      <div class="modal-stats">
+        <div class="modal-stat"><span class="ms-value" id="modalWPM">0</span><span class="ms-label">WPM</span></div>
+        <div class="modal-stat"><span class="ms-value" id="modalAccuracy">0%</span><span class="ms-label">Precisión</span></div>
+        <div class="modal-stat"><span class="ms-value" id="modalTime">0:00</span><span class="ms-label">Tiempo</span></div>
+        <div class="modal-stat"><span class="ms-value" id="modalErrors">0</span><span class="ms-label">Errores</span></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modalRepeat">↻ Repetir</button>
+        <button class="btn-primary" id="modalNext">Siguiente texto →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SEO CONTENT (below the fold) ═══════════ -->
+  <section class="seo-content" id="seoContent">
+    <div class="seo-inner">
+      <h2>¿Qué es el Typing Shadowing?</h2>
+      <p>El <strong>Typing Shadowing</strong> es una técnica de aprendizaje de idiomas que combina la escucha activa con la escritura simultánea. A diferencia del <em>shadowing</em> vocal (donde repites en voz alta lo que escuchas), aquí escribes cada palabra mientras la lees y escuchas su pronunciación. Esto refuerza tres habilidades a la vez: comprensión lectora, ortografía y reconocimiento auditivo.</p>
+      <p>Los textos están organizados por los niveles del <strong>Marco Común Europeo de Referencia (MCER)</strong>, desde A1 (principiante absoluto) hasta C2 (dominio nativo). Cada nivel usa fragmentos de obras clásicas de la literatura en inglés, adaptados en vocabulario y complejidad gramatical para que practiques con textos reales y significativos.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      <details><summary>¿Necesito micrófono o auriculares?</summary><p>No. La herramienta usa la síntesis de voz de tu propio navegador para reproducir la pronunciación. Unos auriculares mejorarán la experiencia, pero no son obligatorios.</p></details>
+      <details><summary>¿Mis datos se almacenan en algún servidor?</summary><p>No. Todo funciona localmente en tu navegador. No se sube ni se almacena ningún dato personal ni texto que escribas.</p></details>
+      <details><summary>¿Puedo usarlo en el móvil?</summary><p>Sí. El diseño es completamente responsive. En dispositivos móviles el teclado virtual se oculta y usas el teclado de tu propio dispositivo.</p></details>
+      <details><summary>¿Cómo se calcula el WPM?</summary><p>WPM (palabras por minuto) se calcula dividiendo las palabras completadas correctamente entre el tiempo transcurrido en minutos. Solo cuenta las palabras completadas sin errores al primer intento.</p></details>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>TypingShadowing — Herramienta educativa gratuita · Tus datos no salen de tu navegador</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js?v=20261002" defer></script>
+</body>
+</html>
