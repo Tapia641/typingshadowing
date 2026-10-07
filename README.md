@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Typing Shadowing
 
-## Getting Started
+Aprende inglés **tipeando y escuchando** (typing + shadowing) con textos
+adaptados a los niveles MCER **A1, A2, B1, B2, C1 y C2**. Gratis, sin registro.
 
-First, run the development server:
+🔗 **Demo en vivo:** https://www.typingshadowing.online
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Características
+
+- **Niveles MCER (A1–C2):** pestañas para cambiar de dificultad, con banco de
+  textos precargados por nivel.
+- **Tema claro/oscuro:** toggle persistente en `localStorage`, sin parpadeo al
+  cargar.
+- **Validación estricta por palabra:** no avanzas hasta escribir bien la palabra
+  actual y pulsar espacio.
+- **Feedback auditivo (TTS):** al completar cada palabra se pronuncia en inglés
+  con la Web Speech API nativa del navegador.
+- **Tarjeta de palabra actual** + **teclado virtual** que resalta la siguiente
+  tecla.
+- **Estadísticas:** WPM, precisión, errores y tiempo; botón *Continuar* y toggle
+  *Continuar automáticamente*.
+- **Espacios publicitarios** placeholder ("ANUNCIO"): banner horizontal,
+  rectangular, pop-up en resultados y banner flotante.
+- **SEO:** metadata, Open Graph, JSON-LD (WebApplication + FAQPage), `sitemap.xml`
+  y `robots.txt`.
+- **Accesible y responsive** (320 / 768 / 1024 / 1440).
+
+## Estructura
+
+```
+app/                 Rutas, layout, metadata, sitemap, robots
+components/          Landing (Hero, HowItWorks, Benefits, FAQ, ads…)
+components/trainer/  Herramienta de tipeo
+lib/                 Contenido por nivel, utilidades y TTS
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Desarrollo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev        # servidor de desarrollo
+npm run lint       # ESLint
+npm run build      # build de producción
+npm run start      # servir el build
+npm run db:push    # aplicar el schema a la base de datos (Drizzle)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Cuenta y base de datos (opcional)
 
-## Learn More
+Sin las variables de entorno, la app funciona igual y el login queda
+deshabilitado. Para activar Google, estadísticas guardadas y el panel de admin:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Postgres (Neon / Vercel Postgres):** crea la base de datos y copia su
+   cadena de conexión en `DATABASE_URL`.
+2. **Auth.js:** define `AUTH_SECRET` (`npx auth secret`).
+3. **Google OAuth:** crea credenciales en
+   <https://console.cloud.google.com/apis/credentials> con el redirect
+   `https://TU_DOMINIO/api/auth/callback/google` y define `AUTH_GOOGLE_ID` y
+   `AUTH_GOOGLE_SECRET`.
+4. **Admin:** define `ADMIN_EMAIL` con tu correo para obtener el rol `admin`.
+5. Aplica el schema: `npm run db:push`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copia `.env.example` a `.env.local` para desarrollo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contenido
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Los textos provienen de obras de **dominio público** adaptadas por nivel o son
+textos originales escritos para esta aplicación. No se reproduce material con
+copyright.
