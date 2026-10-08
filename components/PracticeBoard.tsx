@@ -1,19 +1,12 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useSession } from "next-auth/react";
 import type { Level, TypingText } from "@/lib/types";
 import type { ComputedStats } from "@/lib/text-utils";
 import { useI18n } from "@/lib/i18n";
 import { TypingTrainer } from "@/components/trainer/TypingTrainer";
-import { CustomTextPanel } from "@/components/trainer/CustomTextPanel";
+import { TextPicker } from "@/components/trainer/TextPicker";
 import {
   addCompleted,
   getCompletedServerSnapshot,
@@ -22,8 +15,8 @@ import {
 } from "@/lib/completed-store";
 
 /**
- * Experiencia de práctica de un nivel: lista de textos seleccionable,
- * seguimiento de completados, texto personalizado y la herramienta de tipeo.
+ * Experiencia de práctica de un nivel: una única lista comprimida (textos del
+ * nivel + "Agregar mi texto") y la herramienta de tipeo del ejercicio elegido.
  */
 export function PracticeBoard({
   level,
@@ -77,15 +70,15 @@ export function PracticeBoard({
     return pending ?? texts[0];
   }, [texts, completed]);
 
-  // Texto activo: seleccionado explícitamente, personalizado o el siguiente.
-  const activeSimple: TypingText | null = useMemo(() => {
+  // Texto activo: personalizado o el seleccionado (o el siguiente pendiente).
+  const activeText: TypingText | null = useMemo(() => {
     if (customText) return customText;
     if (selectedId) return texts.find((text) => text.id === selectedId) ?? null;
     return firstAvailable ?? null;
   }, [customText, selectedId, texts, firstAvailable]);
 
-  const activeIndex = activeSimple
-    ? texts.findIndex((text) => text.id === activeSimple.id)
+  const activeIndex = activeText
+    ? texts.findIndex((text) => text.id === activeText.id)
     : -1;
   const isLastText = activeIndex === texts.length - 1;
 
@@ -93,18 +86,40 @@ export function PracticeBoard({
     addCompleted(id);
   }, []);
 
-  const goToText = useCallback((text: TypingText) => {
-    setCustomText(null);
-    setSelectedId(text.id);
+  const scrollToPractice = useCallback(() => {
     requestAnimationFrame(() => {
       practiceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, []);
 
+  const selectText = useCallback(
+    (text: TypingText) => {
+      setCustomText(null);
+      setSelectedId(text.id);
+      scrollToPractice();
+    },
+    [scrollToPractice],
+  );
+
+  const loadCustom = useCallback(
+    (text: { title: string; body: string }) => {
+      setSelectedId(null);
+      setCustomText({
+        id: `custom-${Date.now()}`,
+        level,
+        title: text.title,
+        source: t("practice.customSource"),
+        body: text.body,
+      });
+      scrollToPractice();
+    },
+    [level, scrollToPractice, t],
+  );
+
   const goToNext = useCallback(() => {
     if (activeIndex < 0 || activeIndex >= texts.length - 1) return;
-    goToText(texts[activeIndex + 1]);
-  }, [activeIndex, texts, goToText]);
+    selectText(texts[activeIndex + 1]);
+  }, [activeIndex, texts, selectText]);
 
   const handleFinish = useCallback(
     async (stats: ComputedStats, text: TypingText) => {
@@ -138,66 +153,22 @@ export function PracticeBoard({
 
   return (
     <div className="space-y-6">
-      {/* Selector de texto + texto propio */}
+      {/* Única lista comprimida: textos + agregar mi texto */}
       <div className="mx-auto w-full max-w-3xl">
-        <CustomTextPanel
-          onLoad={(text) => {
-            setSelectedId(null);
-            setCustomText({
-              id: `custom-${Date.now()}`,
-              level,
-              title: text.title,
-              source: t("practice.customSource"),
-              body: text.body,
-            });
-            requestAnimationFrame(() =>
-              practiceRef.current?.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-              }),
-            );
-          }}
-          onCancel={() => setCustomText(null)}
+        <TextPicker
+          level={level}
+          texts={texts}
+          completed={completed}
+          activeId={customText ? null : (activeText?.id ?? null)}
+          isCustomActive={customText !== null}
+          onSelect={selectText}
+          onLoadCustom={loadCustom}
         />
-
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-          {texts.map((text, index) => {
-            const isActive = activeSimple?.id === text.id;
-            const isDone = completed.includes(text.id);
-            return (
-              <li key={text.id}>
-                <button
-                  type="button"
-                  onClick={() => goToText(text)}
-                  className={
-                    "flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm transition-colors " +
-                    (isActive
-                      ? "border-accent bg-accent-soft font-medium text-accent-contrast"
-                      : "border-border-default bg-surface hover:border-accent hover:text-accent")
-                  }
-                >
-                  <span
-                    className={
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold " +
-                      (isDone
-                        ? "bg-accent text-white"
-                        : "bg-surface-muted text-muted-foreground")
-                    }
-                    aria-hidden="true"
-                  >
-                    {isDone ? "✓" : index + 1}
-                  </span>
-                  <span className="truncate">{text.title}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
       </div>
 
-      {/* Herramienta de práctica (solo lo esencial) */}
+      {/* Herramienta de práctica del ejercicio seleccionado */}
       <div ref={practiceRef} className="scroll-mt-28">
-        {activeSimple ? (
+        {activeText ? (
           <>
             {session?.user && saveState !== "idle" ? (
               <p
@@ -215,8 +186,8 @@ export function PracticeBoard({
               </p>
             ) : null}
             <TypingTrainer
-              key={activeSimple.id}
-              text={activeSimple}
+              key={activeText.id}
+              text={activeText}
               isLastText={isLastText}
               autoContinue={autoContinue}
               onToggleAutoContinue={setAutoContinue}
