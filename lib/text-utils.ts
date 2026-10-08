@@ -32,6 +32,32 @@ export function normalizeInput(value: string): string {
   return value.trim().toLowerCase().replace(EDGE_PUNCTUATION, "");
 }
 
+/**
+ * Divide un texto en oraciones. Conserva la puntuación final (. ! ? …) y une
+ * fragmentos que empiezan en minúscula o dígito con la oración anterior para
+ * no cortar abreviaturas sencillas.
+ */
+export function splitSentences(text: string): string[] {
+  const trimmed = text.trim();
+  if (!trimmed) return [];
+
+  const parts = trimmed.match(/[^.!?…]+[.!?…]+(\s+|$)|[^.!?…]+$/g) ?? [trimmed];
+  const sentences: string[] = [];
+
+  for (const part of parts) {
+    const clean = part.trim();
+    if (!clean) continue;
+    const startsLower = /^[a-z0-9]/.test(clean);
+    if (sentences.length > 0 && startsLower) {
+      sentences[sentences.length - 1] += " " + clean;
+    } else {
+      sentences.push(clean);
+    }
+  }
+
+  return sentences.length > 0 ? sentences : [trimmed];
+}
+
 export interface TypingStatsInput {
   correctWords: number;
   errors: number;

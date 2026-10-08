@@ -14,6 +14,7 @@ import type { Level, TypingText } from "@/lib/types";
 import {
   computeKeystrokeStats,
   formatDuration,
+  splitSentences,
   tokenize,
   type ComputedStats,
 } from "@/lib/text-utils";
@@ -25,6 +26,7 @@ import { WordsDisplay } from "./WordsDisplay";
 import { CurrentWordCard } from "./CurrentWordCard";
 import { VirtualKeyboard } from "./VirtualKeyboard";
 import { ResultsModal } from "./ResultsModal";
+import { TextSelector } from "./TextSelector";
 
 type Status = "idle" | "running" | "finished";
 
@@ -36,17 +38,27 @@ function useSpeechSupported(): boolean {
 
 interface TypingTrainerProps {
   initialLevel?: Level;
-  /** Se llama al completar un texto, con las estadísticas finales. */
-  onFinish?: (stats: ComputedStats, text: TypingText) => void;
+  initialTextId?: string;
+  onFinish?: (stats: ComputedStats, text: Pick<TypingText, "id" | "title" | "level">) => void;
 }
 
 export function TypingTrainer({
   initialLevel = "A1",
+  initialTextId,
   onFinish,
 }: TypingTrainerProps) {
   const { t } = useI18n();
   const [level, setLevel] = useState<Level>(initialLevel);
-  const [textIndex, setTextIndex] = useState(0);
+  const levelTexts = useMemo(() => getTextsByLevel(level), [level]);
+  const startIndex = useMemo(() => {
+    const found = initialTextId
+      ? levelTexts.findIndex((text) => text.id === initialTextId)
+      : 0;
+    return found >= 0 ? found : 0;
+  }, [initialTextId, levelTexts]);
+
+  const [textIndex, setTextIndex] = useState(startIndex);
+  const [sentenceIndex, setSentenceIndex] = useState(0);
   const [status, setStatus] = useState<Status>("idle");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [typed, setTyped] = useState("");
@@ -65,10 +77,23 @@ export function TypingTrainer({
   const totalKeysRef = useRef(0);
   const correctKeysRef = useRef(0);
   const errorsRef = useRef(0);
-  const levelTexts = useMemo(() => getTextsByLevel(level), [level]);
+
   const activeText = levelTexts[textIndex] ?? levelTexts[0];
-  const words = useMemo(() => tokenize(activeText.body), [activeText]);
-  const isLastText = textIndex === levelTexts.length - 1;
+  const sentences = useMemo(() => splitSentences(activeText.body), [activeText]);
+  const currentSentence = sentences[sentenceIndex] ?? "";
+  const words = useMemo(() => tokenize(currentSentence), [currentSentence]);
+  const isLastSentence = sentenceIndex === sentences.length - 1;
+  const totalWords = useMemo(
+    () => sentences.reduce((sum, s) => sum + tokenize(s).length, 0),
+    [sentences],
+  );
+  const doneWords = useMemo(
+    () =>
+      sentences
+        .slice(0, sentenceIndex)
+        .reduce((sum, s) => sum + tokenize(s).length, 0) + currentIndex,
+    [sentences, sentenceIndex, currentIndex],
+  );
   const targetWord = words[currentIndex]?.core ?? "";
   const locked = status !== "finished" && hasError(typed, targetWord);
 
@@ -89,6 +114,7 @@ export function TypingTrainer({
     stopSpeaking();
     setStatus("idle");
     setCurrentIndex(0);
+    setSentenceIndex(0);
     setTyped("");
     setTotalKeys(0);
     setCorrectKeys(0);
@@ -136,26 +162,35 @@ export function TypingTrainer({
         errors: errorsRef.current,
         elapsedMs: elapsed,
       }),
-      activeText,
+      { id: activeText.id, title: activeText.title, level: activeText.level },
     );
 
-    // Si el usuario pidió no ver estadísticas, se avanza directo al siguiente
-    // texto; las estadísticas se muestran siempre en el último texto.
-    if (hideStats && !isLastText) {
+    if (hideStats) {
       window.setTimeout(() => loadText(textIndex + 1), 500);
     } else {
       setShowResults(true);
     }
-  }, [activeText, hideStats, isLastText, loadText, onFinish, textIndex]);
+  }, [activeText, hideStats, loadText, onFinish, textIndex]);
 
+  /** Avanza a la siguiente palabra o, si era la última, a la siguiente oración. */
   const completeCurrentWord = useCallback(() => {
     setTyped("");
-    if (currentIndex >= words.length - 1) {
+    if (currentIndex < words.length - 1) {
+      setCurrentIndex((index) => index + 1);
+      return;
+    }
+    // Fin de la oración: se lee completa y se avanza.
+    speak(currentSentence);
+    if (isLastSentence) {
       finish();
     } else {
-      setCurrentIndex((index) => index + 1);
+      window.setTimeout(() => {
+        setSentenceIndex((index) => index + 1);
+        setCurrentIndex(0);
+        setTyped("");
+      }, 700);
     }
-  }, [currentIndex, finish, words.length]);
+  }, [currentIndex, currentSentence, finish, isLastSentence, words.length]);
 
   const attemptAdvanceWord = useCallback(() => {
     if (typed.toLowerCase() === targetWord.toLowerCase() && targetWord) {
@@ -173,12 +208,11 @@ export function TypingTrainer({
         correctKeysRef.current += 1;
         setCorrectKeys(correctKeysRef.current);
         playKeySound("click");
-        return true;
+        return;
       }
       errorsRef.current += 1;
       setErrors(errorsRef.current);
       playKeySound("error");
-      return false;
     },
     [],
   );
@@ -214,20 +248,19 @@ export function TypingTrainer({
       }
 
       if (raw.length > typed.length) {
-        // Solo un carácter nuevo por evento.
         const next = typed + raw.slice(typed.length, typed.length + 1);
         const expectedChar = target[next.length - 1];
         const typedChar = next[next.length - 1];
         registerKeystroke(typedChar, expectedChar);
         setTyped(next);
 
-        // Pronunciación en el instante en que la palabra queda completa.
+        // Si la palabra (y era la última de la oración) queda completa.
         if (
           next.toLowerCase() === target.toLowerCase() &&
           currentIndex === words.length - 1
         ) {
-          speak(target);
-          finish();
+          // La locución y el avance se manejan en completeCurrentWord.
+          completeCurrentWord();
         } else if (next.toLowerCase() === target.toLowerCase()) {
           speak(target);
         }
@@ -235,8 +268,8 @@ export function TypingTrainer({
     },
     [
       attemptAdvanceWord,
+      completeCurrentWord,
       currentIndex,
-      finish,
       locked,
       registerKeystroke,
       status,
@@ -247,10 +280,10 @@ export function TypingTrainer({
 
   // Auto-continuar tras finalizar, para el flujo sin pausas.
   useEffect(() => {
-    if (!showResults || !autoContinue) return;
+    if (!showResults || !autoContinue || hideStats) return;
     const id = window.setTimeout(() => loadText(textIndex + 1), 2500);
     return () => window.clearTimeout(id);
-  }, [showResults, autoContinue, loadText, textIndex]);
+  }, [showResults, autoContinue, hideStats, loadText, textIndex]);
 
   const stats: ComputedStats = useMemo(
     () =>
@@ -268,7 +301,7 @@ export function TypingTrainer({
       ? null
       : locked
         ? "Backspace"
-        : typed.length < words[currentIndex]?.core.length
+        : typed.length < (words[currentIndex]?.core.length ?? 0)
           ? (words[currentIndex]?.core[typed.length] ?? null)
           : typed.toLowerCase() === targetWord.toLowerCase() && targetWord
             ? " "
@@ -280,7 +313,7 @@ export function TypingTrainer({
       <div
         role="tablist"
         aria-label="Selecciona tu nivel MCER"
-        className="mx-auto mb-6 flex max-w-2xl flex-wrap justify-center gap-1.5 rounded-2xl border border-border-default bg-surface p-1.5"
+        className="mx-auto mb-4 flex max-w-2xl flex-wrap justify-center gap-1.5 rounded-2xl border border-border-default bg-surface p-1.5"
       >
         {LEVELS.map((item) => {
           const active = item.id === level;
@@ -306,6 +339,17 @@ export function TypingTrainer({
       </div>
 
       <div className="mx-auto max-w-3xl">
+        {/* Selector de texto por título */}
+        <TextSelector
+          label={t("practice.selectText")}
+          texts={levelTexts}
+          value={activeText.id}
+          onChange={(id) => {
+            const index = levelTexts.findIndex((text) => text.id === id);
+            if (index >= 0) loadText(index);
+          }}
+        />
+
         {/* Barra de contexto + estadísticas en vivo */}
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
           <span className="font-medium text-foreground">{activeText.title}</span>
@@ -322,10 +366,7 @@ export function TypingTrainer({
             label={t("results.time")}
             value={formatDuration(elapsedSeconds)}
           />
-          <LiveStat
-            label={t("practice.text")}
-            value={`${Math.min(currentIndex, words.length)}/${words.length}`}
-          />
+          <LiveStat label={t("practice.text")} value={`${doneWords}/${totalWords}`} />
         </div>
 
         <CurrentWordCard
@@ -342,14 +383,35 @@ export function TypingTrainer({
           }}
         />
 
-        {/* Área de texto para shadowing, centrada */}
-        <div className="mt-4 rounded-2xl border border-border-default bg-surface p-4 text-center sm:p-6">
-          <WordsDisplay
-            words={words}
-            currentIndex={currentIndex}
-            status={status}
-            variant="shadowing"
-          />
+        {/* Oración actual + botón de reproducción */}
+        <div className="mt-4 flex items-stretch gap-2">
+          <div className="flex-1 rounded-2xl border border-border-default bg-surface p-4 text-center sm:p-6">
+            <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              {t("practice.sentence")} {sentenceIndex + 1}/{sentences.length}
+            </p>
+            <WordsDisplay
+              words={words}
+              currentIndex={currentIndex}
+              status={status}
+              variant="shadowing"
+            />
+          </div>
+          {speechSupported ? (
+            <button
+              type="button"
+              onClick={() => speak(currentSentence, 0.9)}
+              aria-label={t("practice.playSentence")}
+              title={t("practice.playSentence")}
+              className="flex w-14 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-border-default bg-surface text-accent transition-colors hover:border-accent hover:bg-accent-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              <span className="text-xl" aria-hidden="true">
+                ▶
+              </span>
+              <span className="text-[0.6rem] leading-tight">
+                {t("practice.fullSentence")}
+              </span>
+            </button>
+          ) : null}
         </div>
 
         {/* Entrada estricta */}
@@ -399,14 +461,14 @@ export function TypingTrainer({
             className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted"
             role="progressbar"
             aria-valuemin={0}
-            aria-valuemax={words.length}
-            aria-valuenow={currentIndex}
+            aria-valuemax={totalWords}
+            aria-valuenow={doneWords}
             aria-label={t("practice.progress")}
           >
             <div
               className="h-full rounded-full bg-accent transition-all"
               style={{
-                width: `${words.length ? (currentIndex / words.length) * 100 : 0}%`,
+                width: `${totalWords ? (doneWords / totalWords) * 100 : 0}%`,
               }}
             />
           </div>
@@ -436,7 +498,7 @@ export function TypingTrainer({
       <ResultsModal
         open={showResults}
         stats={stats}
-        isLastText={isLastText}
+        isLastText={textIndex === levelTexts.length - 1}
         autoContinue={autoContinue}
         onToggleAutoContinue={setAutoContinue}
         onContinue={() => loadText(textIndex + 1)}

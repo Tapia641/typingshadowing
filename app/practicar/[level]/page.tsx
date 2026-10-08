@@ -29,16 +29,23 @@ export async function generateMetadata({
   };
 }
 
+export const instant = false;
+
 export default async function LevelPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ level: string }>;
+  searchParams: Promise<{ texto?: string }>;
 }) {
   const { level } = await params;
+  const { texto } = await searchParams;
   const upper = level.toUpperCase();
   if (!isLevel(upper)) notFound();
   const meta = getLevelMeta(upper);
   const texts = getTextsByLevel(upper as Level);
+  const initialTextId =
+    texto && texts.some((text) => text.id === texto) ? texto : undefined;
 
   return (
     <>
@@ -65,8 +72,30 @@ export default async function LevelPage({
           </p>
         </div>
 
+        <div className="mx-auto mt-8 w-full max-w-3xl">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            {texts.length} textos disponibles en este nivel
+          </h2>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+            {texts.map((text, index) => (
+              <li key={text.id}>
+                <Link
+                  href={`/practicar/${level}?texto=${text.id}`}
+                  scroll={false}
+                  className="flex items-center gap-3 rounded-xl border border-border-default bg-surface px-3 py-2 text-sm transition-colors hover:border-accent hover:text-accent"
+                >
+                  <span className="text-xs text-muted-foreground">
+                    {index + 1}
+                  </span>
+                  <span className="truncate">{text.title}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="mt-10">
-          <PracticeBoard level={upper as Level} />
+          <PracticeBoard level={upper as Level} initialTextId={initialTextId} />
         </div>
 
         <div className="mx-auto mt-10 max-w-3xl">

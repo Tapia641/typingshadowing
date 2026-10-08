@@ -4,9 +4,10 @@ import type { Level, TypingText } from "./types";
  * Textos de práctica por nivel. Los fragmentos provienen de obras de dominio
  * público o son textos originales escritos para esta aplicación, adaptados a
  * la complejidad de cada nivel MCER. No se reproduce material con copyright.
+ * Cada nivel tiene al menos 10 textos.
  */
 export const TEXTS: TypingText[] = [
-  // ---------------------------------------------------------------- A1
+  // ================================================================ A1
   {
     id: "a1-cat",
     level: "A1",
@@ -28,95 +29,6 @@ export const TEXTS: TypingText[] = [
     source: "Texto original para principiantes",
     body: "This is my room. The walls are white. There is a big bed. There is a small desk. A lamp is on the desk. I have three books and one pen. My shoes are under the bed. The window is open. The air is fresh. I feel good here.",
   },
-
-  // ---------------------------------------------------------------- A2
-  {
-    id: "a2-weekend",
-    level: "A2",
-    title: "A Weekend in the Country",
-    source: "Texto original adaptado a nivel elemental",
-    body: "Last weekend my friends and I went to the country. We left the city early on Saturday morning and took a train to a small village. The weather was warm and the sky was clear. We walked along a river and stopped to take photos. At noon we ate sandwiches near an old bridge. In the afternoon we visited a farm and helped to feed the animals. It was a simple day, but we had a lot of fun.",
-  },
-  {
-    id: "a2-coffee",
-    level: "A2",
-    title: "The Coffee Shop",
-    source: "Texto original adaptado a nivel elemental",
-    body: "There is a small coffee shop near my house. The owner is a friendly woman named Rosa. Every morning I buy a cup of coffee there and read the news. She always remembers my name and asks how I am. The shop is warm in winter and cool in summer. Students come there to study, and neighbours meet to talk. It is not a big place, but it feels like home.",
-  },
-
-  // ---------------------------------------------------------------- B1
-  {
-    id: "b1-robinson",
-    level: "B1",
-    title: "A Sailor's Decision",
-    source: "Adaptación libre de Robinson Crusoe (Daniel Defoe, dominio público)",
-    body: "For many years I had dreamed of going to sea, although my father had warned me against it. He believed that a quiet life at home was the safest path, and he described how dangerous the ocean could be. I listened to him politely, but my desire was stronger than his advice. When a friend offered me a place on a ship, I accepted without hesitation. At that moment I did not imagine the storms, the loneliness, or the long years of struggle that were waiting for me.",
-  },
-  {
-    id: "b1-science",
-    level: "B1",
-    title: "Why We Sleep",
-    source: "Texto original de divulgación a nivel intermedio",
-    body: "Scientists have studied sleep for many decades, yet it still surprises them. During the night the brain does not simply rest. It organises memories, repairs cells, and prepares the body for a new day. People who sleep well usually learn faster and feel calmer, while those who sleep badly often struggle to concentrate. However, many of us treat sleep as something optional, something we can borrow from and repay later. The research suggests we cannot. Sleep is not a pause in life; it is part of it.",
-  },
-  {
-    id: "b1-city",
-    level: "B1",
-    title: "Living Without a Car",
-    source: "Texto original de divulgación a nivel intermedio",
-    body: "When I moved to the city, I decided to sell my car. At first the change felt strange, and I worried about being late for work. In practice, however, my life became simpler. I walk more, I use the underground, and I rent a bicycle when the weather is good. I spend less money on fuel and repairs, and I feel healthier. The biggest surprise, though, is how much of the city I had never noticed. Traveling more slowly has taught me to look around.",
-  },
-
-  // ---------------------------------------------------------------- B2
-  {
-    id: "b2-frankenstein",
-    level: "B2",
-    title: "The Creature's Plea",
-    source: "Adaptación libre de Frankenstein (Mary Shelley, dominio público)",
-    body: "You accuse me of crimes, and yet you refuse to hear my story. I was not always the miserable creature you see before you. Once I felt hope; once I believed that kindness might reach me, even in my strange and frightening form. I learned language by listening at a window, and I learned to admire the very people who would later drive me away. If you, who gave me life, cannot offer me a single gentle word, then how can you be surprised that the world has taught me to hate?",
-  },
-  {
-    id: "b2-technology",
-    level: "B2",
-    title: "The Attention Economy",
-    source: "Texto original de opinión a nivel intermedio alto",
-    body: "The modern internet was built on a simple bargain: the service is free, and in exchange we offer our attention. Over time, however, that bargain has been quietly rewritten. Platforms are designed to keep us in place for as long as possible, and the tools that measure our habits are far more sophisticated than the ones that protect us from them. It is easy to blame individual willpower, yet the problem is structural. When a product's revenue depends on how long we stay, the incentives push toward distraction, not clarity. Reclaiming our focus is not simply a personal project; it is a response to a system designed to consume it.",
-  },
-
-  // ---------------------------------------------------------------- C1
-  {
-    id: "c1-pride",
-    level: "C1",
-    title: "An Unexpected Proposal",
-    source: "Adaptación libre de Orgullo y Prejuicio (Jane Austen, dominio público)",
-    body: "It is a truth sufficiently acknowledged that a person in possession of a comfortable fortune must be in want of a suitable match, however little may be known of the feelings of the person concerned. Such considerations, when examined closely, reveal more about the expectations of society than about the desires of any individual. Elizabeth had long observed that the world was eager to arrange the lives of others while claiming to act in their interest. She therefore listened to the proposal with composure, weighing each elegant phrase, and found that it concealed very little that resembled genuine affection.",
-  },
-  {
-    id: "c1-mind",
-    level: "C1",
-    title: "The Architecture of Memory",
-    source: "Texto original de ensayo a nivel avanzado",
-    body: "Memory is not a warehouse where the past is stored intact, waiting to be retrieved in its original form. It is closer to a workshop, where each recollection is rebuilt from fragments every time we summon it. This process is remarkably efficient and equally fallible. The same mechanism that lets us recognise a familiar face after decades also allows a confident witness to describe an event that never occurred. What we call remembering is, in truth, an act of reconstruction, guided by expectation, emotion, and the stories we have told ourselves so often that they have hardened into fact.",
-  },
-
-  // ---------------------------------------------------------------- C2
-  {
-    id: "c2-moby",
-    level: "C2",
-    title: "The Whiteness of the Whale",
-    source: "Adaptación libre de Moby-Dick (Herman Melville, dominio público)",
-    body: "It was the whiteness of the whale that above all things appalled me. But how can I hope to explain myself here, and yet, in some dim, random way, explain myself I must, else all these chapters might be naught. For though in many natural objects whiteness refiningly enhances beauty, as if imparting some special virtue of its own, yet there was a subtler mystery in this hue, a pallor that seemed to summon terror rather than delight. Amid the infinite series of the manifold meanings of colour, this one remained, to the end, unaccountable, an elusive spectre that haunted the mind long after the eye had turned away.",
-  },
-  {
-    id: "c2-time",
-    level: "C2",
-    title: "On the Vanity of Reputation",
-    source: "Texto original de ensayo a nivel de maestría",
-    body: "Reputation, that most brittle of possessions, is accumulated through years of unremarkable discipline and squandered, with astonishing economy, in a single unguarded moment. The ambitious soon learn that it answers to neither merit nor intention, being fashioned instead in the unreliable imagination of strangers. To devote one's life to its cultivation is therefore to mortgage substance for the sake of appearance. And yet, knowing this, we persist, persuaded that the judgement of others, however capricious, constitutes the only ledger in which our worth may be inscribed.",
-  },
-
-  // ------------------------------------- Clásicos de dominio público
   {
     id: "a1-prince",
     level: "A1",
@@ -137,6 +49,57 @@ export const TEXTS: TypingText[] = [
     title: "The Tortoise and the Hare — Esopo",
     source: "Fábula de Esopo (dominio público)",
     body: "A hare was making fun of the tortoise one day for being so slow. Do you ever get anywhere? he asked with a laugh. Yes, replied the tortoise, and I get there sooner than you think.",
+  },
+  {
+    id: "a1-dog",
+    level: "A1",
+    title: "My Dog Rex",
+    source: "Texto original para principiantes",
+    body: "I have a dog. His name is Rex. He is brown and white. He is very friendly. We play in the park every day. He likes to run and jump. He eats meat and rice. At night, he sleeps near my bed. Rex is my best friend.",
+  },
+  {
+    id: "a1-market",
+    level: "A1",
+    title: "At the Market",
+    source: "Texto original para principiantes",
+    body: "Today I go to the market. I see apples, bananas, and oranges. The fruit is fresh and cheap. I buy three red apples. My mother buys bread and cheese. We walk home together. It is a sunny day. I am tired but happy.",
+  },
+  {
+    id: "a1-family",
+    level: "A1",
+    title: "My Family",
+    source: "Texto original para principiantes",
+    body: "This is my family. My father is tall. My mother is kind. I have one brother and one sister. We live in a small house. On Sundays, we eat lunch together. We talk and laugh a lot. I love my family very much.",
+  },
+  {
+    id: "a1-rain",
+    level: "A1",
+    title: "A Rainy Day",
+    source: "Texto original para principiantes",
+    body: "It is raining today. I stay at home. I look out the window. The trees are wet. I drink hot tea. I listen to music. My cat sleeps on the sofa. Later, the rain stops. I see a rainbow in the sky. It is beautiful.",
+  },
+  {
+    id: "a1-school",
+    level: "A1",
+    title: "My School",
+    source: "Texto original para principiantes",
+    body: "I go to school every morning. My school is big and clean. I have many friends there. My teacher is very nice. We read and write English. We also play games. I like my English class. School is fun for me.",
+  },
+
+  // ================================================================ A2
+  {
+    id: "a2-weekend",
+    level: "A2",
+    title: "A Weekend in the Country",
+    source: "Texto original adaptado a nivel elemental",
+    body: "Last weekend my friends and I went to the country. We left the city early on Saturday morning and took a train to a small village. The weather was warm and the sky was clear. We walked along a river and stopped to take photos. At noon we ate sandwiches near an old bridge. In the afternoon we visited a farm and helped to feed the animals. It was a simple day, but we had a lot of fun.",
+  },
+  {
+    id: "a2-coffee",
+    level: "A2",
+    title: "The Coffee Shop",
+    source: "Texto original adaptado a nivel elemental",
+    body: "There is a small coffee shop near my house. The owner is a friendly woman named Rosa. Every morning I buy a cup of coffee there and read the news. She always remembers my name and asks how I am. The shop is warm in winter and cool in summer. Students come there to study, and neighbours meet to talk. It is not a big place, but it feels like home.",
   },
   {
     id: "a2-alice",
@@ -160,6 +123,71 @@ export const TEXTS: TypingText[] = [
     body: "The Mole had been working very hard all the morning, spring-cleaning his little home. First with brooms, then with dusters, then on ladders and steps and chairs, with a brush and a pail of whitewash.",
   },
   {
+    id: "a2-travel",
+    level: "A2",
+    title: "My First Trip Abroad",
+    source: "Texto original adaptado a nivel elemental",
+    body: "Two years ago, I travelled abroad for the first time. I flew to Portugal with my sister. The flight was short, but I was very nervous. When we arrived, the sun was shining and the streets were full of people. We tried local food and visited old churches. I learned a few words in Portuguese. It was an amazing experience.",
+  },
+  {
+    id: "a2-cooking",
+    level: "A2",
+    title: "Learning to Cook",
+    source: "Texto original adaptado a nivel elemental",
+    body: "Last month I decided to learn how to cook. I watched videos online and wrote down simple recipes. At first, my food was not very good. I burned the rice twice and forgot the salt. But I did not give up. Now I can make soup, pasta, and a chocolate cake. Cooking is easier than I thought.",
+  },
+  {
+    id: "a2-pet",
+    level: "A2",
+    title: "A New Puppy",
+    source: "Texto original adaptado a nivel elemental",
+    body: "My family got a puppy last spring. She is a small golden dog with big brown eyes. We named her Luna. She loves to play with a ball in the garden. She follows me everywhere I go. Sometimes she is a little naughty and hides our shoes. But she is very sweet, and we all love her.",
+  },
+  {
+    id: "a2-hobby",
+    level: "A2",
+    title: "My Favourite Hobby",
+    source: "Texto original adaptado a nivel elemental",
+    body: "My favourite hobby is photography. I take pictures of flowers, buildings, and people. I use my phone because it is easy to carry. On weekends I walk around the city and look for interesting places. Sometimes I share my photos with my friends online. Photography helps me to notice small, beautiful details.",
+  },
+  {
+    id: "a2-weather",
+    level: "A2",
+    title: "The Four Seasons",
+    source: "Texto original adaptado a nivel elemental",
+    body: "In spring, the weather is warm and the flowers begin to grow. In summer, it is hot and we go to the beach. In autumn, the leaves turn red and yellow, and it rains more often. In winter, it is cold and sometimes it snows. Each season is different, and I like all of them for different reasons.",
+  },
+  {
+    id: "a2-library",
+    level: "A2",
+    title: "The Old Library",
+    source: "Texto original adaptado a nivel elemental",
+    body: "Near my house there is an old library. It is a quiet place with tall wooden shelves. I go there every Tuesday afternoon. I borrow two or three books and read them at home. The librarian is a calm man who always recommends good stories. Reading in that library makes me feel relaxed and happy.",
+  },
+
+  // ================================================================ B1
+  {
+    id: "b1-robinson",
+    level: "B1",
+    title: "A Sailor's Decision",
+    source: "Adaptación libre de Robinson Crusoe (Daniel Defoe, dominio público)",
+    body: "For many years I had dreamed of going to sea, although my father had warned me against it. He believed that a quiet life at home was the safest path, and he described how dangerous the ocean could be. I listened to him politely, but my desire was stronger than his advice. When a friend offered me a place on a ship, I accepted without hesitation. At that moment I did not imagine the storms, the loneliness, or the long years of struggle that were waiting for me.",
+  },
+  {
+    id: "b1-science",
+    level: "B1",
+    title: "Why We Sleep",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "Scientists have studied sleep for many decades, yet it still surprises them. During the night the brain does not simply rest. It organises memories, repairs cells, and prepares the body for a new day. People who sleep well usually learn faster and feel calmer, while those who sleep badly often struggle to concentrate. However, many of us treat sleep as something optional, something we can borrow from and repay later. The research suggests we cannot. Sleep is not a pause in life; it is part of it.",
+  },
+  {
+    id: "b1-city",
+    level: "B1",
+    title: "Living Without a Car",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "When I moved to the city, I decided to sell my car. At first the change felt strange, and I worried about being late for work. In practice, however, my life became simpler. I walk more, I use the underground, and I rent a bicycle when the weather is good. I spend less money on fuel and repairs, and I feel healthier. The biggest surprise, though, is how much of the city I had never noticed. Traveling more slowly has taught me to look around.",
+  },
+  {
     id: "b1-sherlock",
     level: "B1",
     title: "The Adventures of Sherlock Holmes — Arthur Conan Doyle",
@@ -179,6 +207,57 @@ export const TEXTS: TypingText[] = [
     title: "The Wonderful Wizard of Oz — L. Frank Baum",
     source: "The Wonderful Wizard of Oz (dominio público)",
     body: "Dorothy lived in the midst of the great Kansas prairies, with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer's wife. Their house was small, for the lumber to build it had to be carried by wagon.",
+  },
+  {
+    id: "b1-habits",
+    level: "B1",
+    title: "The Power of Small Habits",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "Many people believe that big changes require big efforts. In reality, the opposite is often true. Small habits, repeated every day, can transform our lives more effectively than dramatic decisions that we abandon after a week. Reading ten pages, walking for twenty minutes, or practising a language for a few minutes each day may seem insignificant. Yet over a year, these tiny actions add up to something remarkable. The secret is consistency, not intensity.",
+  },
+  {
+    id: "b1-volunteer",
+    level: "B1",
+    title: "A Summer as a Volunteer",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "Two summers ago, I spent a month working as a volunteer at an animal shelter. I cleaned the cages, prepared food, and took the dogs for long walks. The work was harder than I expected, and some days I came home exhausted. However, watching a frightened dog slowly learn to trust people was deeply rewarding. I also made friends with other volunteers who shared the same love for animals. That month taught me more about patience than any book could.",
+  },
+  {
+    id: "b1-technology",
+    level: "B1",
+    title: "Studying Online",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "Online learning has changed the way many people study. Students can now attend classes from home, watch videos as many times as they need, and learn at their own pace. This flexibility is a great advantage for people with busy schedules. On the other hand, studying alone can be difficult, because it is easy to lose motivation. Successful online students usually set clear goals and create a fixed routine. With discipline, the internet can become a powerful classroom.",
+  },
+  {
+    id: "b1-environment",
+    level: "B1",
+    title: "Small Actions for the Planet",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "We often feel that protecting the environment is a problem too large for individuals to solve. While it is true that governments and companies must act, our daily choices still matter. Using a reusable bottle, taking shorter showers, and buying local food all reduce waste and pollution. These actions may seem small, but when millions of people adopt them, the effect becomes enormous. Change does not always start with a law; sometimes it starts in the kitchen.",
+  },
+  {
+    id: "b1-travel",
+    level: "B1",
+    title: "The Joy of Slow Travel",
+    source: "Texto original de divulgación a nivel intermedio",
+    body: "Fast travel, with its long lists of monuments and crowded schedules, often leaves us more tired than before. Slow travel is different. Instead of rushing from one sight to another, it invites us to stay longer in one place. We drink coffee in a local café, talk with shopkeepers, and walk without a map. We may see fewer famous buildings, but we remember the people and the small moments. Sometimes the best souvenir is a story.",
+  },
+
+  // ================================================================ B2
+  {
+    id: "b2-frankenstein",
+    level: "B2",
+    title: "The Creature's Plea",
+    source: "Adaptación libre de Frankenstein (Mary Shelley, dominio público)",
+    body: "You accuse me of crimes, and yet you refuse to hear my story. I was not always the miserable creature you see before you. Once I felt hope; once I believed that kindness might reach me, even in my strange and frightening form. I learned language by listening at a window, and I learned to admire the very people who would later drive me away. If you, who gave me life, cannot offer me a single gentle word, then how can you be surprised that the world has taught me to hate?",
+  },
+  {
+    id: "b2-attention",
+    level: "B2",
+    title: "The Attention Economy",
+    source: "Texto original de opinión a nivel intermedio alto",
+    body: "The modern internet was built on a simple bargain: the service is free, and in exchange we offer our attention. Over time, however, that bargain has been quietly rewritten. Platforms are designed to keep us in place for as long as possible, and the tools that measure our habits are far more sophisticated than the ones that protect us from them. It is easy to blame individual willpower, yet the problem is structural. When a product's revenue depends on how long we stay, the incentives push toward distraction, not clarity. Reclaiming our focus is not simply a personal project; it is a response to a system designed to consume it.",
   },
   {
     id: "b2-pride",
@@ -202,6 +281,57 @@ export const TEXTS: TypingText[] = [
     body: "My father's family name being Pirrip, and my Christian name Philip, my infant tongue could make of both names nothing longer or more explicit than Pip. So, I called myself Pip, and came to be called Pip.",
   },
   {
+    id: "b2-cities",
+    level: "B2",
+    title: "The Future of Cities",
+    source: "Texto original de opinión a nivel intermedio alto",
+    body: "More than half of the world's population now lives in cities, and that proportion continues to grow. To accommodate so many people, urban planners are rethinking the way cities work. Some propose denser neighbourhoods where homes, offices, and shops are within walking distance. Others invest in public transport that makes cars unnecessary. The challenge is not only technical but social: a city must be efficient without becoming impersonal. The most successful examples manage to be both crowded and kind, which is far harder than it sounds.",
+  },
+  {
+    id: "b2-language",
+    level: "B2",
+    title: "How Languages Shape Thought",
+    source: "Texto original de divulgación a nivel intermedio alto",
+    body: "The language we speak does not completely determine how we think, but it certainly influences it. Some languages have many words for snow, while others describe colours with a single term that English divides into two. Studies suggest that bilingual people may shift slightly in personality depending on the language they are using. This does not mean that a language imprisons the mind. Rather, it offers a particular set of tools, and those tools shape which ideas feel natural and which ones require extra effort to express.",
+  },
+  {
+    id: "b2-work",
+    level: "B2",
+    title: "Rethinking the Working Week",
+    source: "Texto original de opinión a nivel intermedio alto",
+    body: "For most of the last century, the five-day working week seemed as fixed as the seasons. Recently, however, several companies have experimented with a four-day week without reducing salaries. The results have surprised many sceptics: in most trials, productivity stayed the same or even increased, while stress and staff turnover fell. Critics argue that such experiments work only in certain industries, and they may be right. Still, the debate forces us to ask an uncomfortable question: do we value time, or do we merely value the appearance of being busy?",
+  },
+  {
+    id: "b2-reading",
+    level: "B2",
+    title: "Why Reading Still Matters",
+    source: "Texto original de divulgación a nivel intermedio alto",
+    body: "In an age of short videos and endless notifications, deep reading has become a rare skill. Yet the benefits remain difficult to replace. Reading a long text trains us to follow an argument, to hold several ideas in mind at once, and to tolerate uncertainty until the meaning becomes clear. These abilities are valuable far beyond books. They help us understand contracts, evaluate news, and listen to people who disagree with us. A society that stops reading may still be entertained, but it becomes easier to deceive.",
+  },
+  {
+    id: "b2-space",
+    level: "B2",
+    title: "The Cost of Exploring Space",
+    source: "Texto original de opinión a nivel intermedio alto",
+    body: "Every time a rocket leaves the ground, someone asks why we spend so much money on space while so many problems remain on Earth. It is a fair question. Space programmes are expensive, and their benefits often arrive years later. Supporters point to the technologies that space research has produced, from satellite navigation to medical devices. They also argue that exploration inspires young people and unites countries in common projects. The debate has no easy answer, but it reminds us that progress always involves choosing between competing priorities.",
+  },
+
+  // ================================================================ C1
+  {
+    id: "c1-pride",
+    level: "C1",
+    title: "An Unexpected Proposal",
+    source: "Adaptación libre de Orgullo y Prejuicio (Jane Austen, dominio público)",
+    body: "It is a truth sufficiently acknowledged that a person in possession of a comfortable fortune must be in want of a suitable match, however little may be known of the feelings of the person concerned. Such considerations, when examined closely, reveal more about the expectations of society than about the desires of any individual. Elizabeth had long observed that the world was eager to arrange the lives of others while claiming to act in their interest. She therefore listened to the proposal with composure, weighing each elegant phrase, and found that it concealed very little that resembled genuine affection.",
+  },
+  {
+    id: "c1-memory",
+    level: "C1",
+    title: "The Architecture of Memory",
+    source: "Texto original de ensayo a nivel avanzado",
+    body: "Memory is not a warehouse where the past is stored intact, waiting to be retrieved in its original form. It is closer to a workshop, where each recollection is rebuilt from fragments every time we summon it. This process is remarkably efficient and equally fallible. The same mechanism that lets us recognise a familiar face after decades also allows a confident witness to describe an event that never occurred. What we call remembering is, in truth, an act of reconstruction, guided by expectation, emotion, and the stories we have told ourselves so often that they have hardened into fact.",
+  },
+  {
     id: "c1-frankenstein",
     level: "C1",
     title: "Frankenstein — Mary Shelley",
@@ -221,6 +351,57 @@ export const TEXTS: TypingText[] = [
     title: "The Great Gatsby — F. Scott Fitzgerald",
     source: "The Great Gatsby (dominio público desde 2021)",
     body: "In my younger and more vulnerable years my father gave me some advice that I've been turning over in my mind ever since. Whenever you feel like criticizing anyone, he told me, just remember that all the people in this world haven't had the advantages that you've had.",
+  },
+  {
+    id: "c1-progress",
+    level: "C1",
+    title: "The Myth of Progress",
+    source: "Texto original de ensayo a nivel avanzado",
+    body: "We are accustomed to speaking of progress as though it were a river that carries every generation forward. Yet history offers little support for such confidence. Societies have advanced in medicine and retreated in civility; they have built libraries and burned them in the same century. Progress is not a law of nature but a fragile achievement, maintained only by constant vigilance. To assume it will continue without effort is to mistake a garden for a wilderness. The moment we stop tending it, the weeds return.",
+  },
+  {
+    id: "c1-solitude",
+    level: "C1",
+    title: "In Praise of Solitude",
+    source: "Texto original de ensayo a nivel avanzado",
+    body: "Modern life treats solitude with suspicion, as if it were a symptom of failure rather than a condition of thought. Yet nearly every valuable idea has been born in silence. It is in solitude that we hear our own questions clearly, undistracted by the opinions of others. This is not an argument for isolation, which breeds bitterness, but for deliberate retreat. The person who can be alone without fear is better able to be with others without pretence. Solitude and company, properly balanced, refine each other.",
+  },
+  {
+    id: "c1-education",
+    level: "C1",
+    title: "What Education Is For",
+    source: "Texto original de ensayo a nivel avanzado",
+    body: "Public debate about education tends to reduce it to a matter of economic return. We are told that schools exist to prepare workers, and that degrees are investments expected to yield measurable profit. This view is not entirely wrong, but it is dangerously narrow. Education also teaches us how to live among people unlike ourselves, how to recognise manipulation, and how to find meaning when no one is paying us. A society that trains only skills and neglects judgement may produce efficient people and, at the same time, easy subjects.",
+  },
+  {
+    id: "c1-authenticity",
+    level: "C1",
+    title: "The Illusion of Authenticity",
+    source: "Texto original de ensayo a nivel avanzado",
+    body: "We are told constantly to be authentic, as if the self were a hidden treasure waiting to be revealed. In practice, the advice is more puzzling than it appears. Which self, exactly, should we express: the one we are on a good day or the one we are when we are tired, jealous, or afraid? Character is not something we discover fully formed; it is something we construct through the choices we repeat. Authenticity, understood honestly, is less an act of expression than a discipline of becoming.",
+  },
+  {
+    id: "c1-news",
+    level: "C1",
+    title: "The Speed of Information",
+    source: "Texto original de ensayo a nivel avanzado",
+    body: "The speed at which information now travels has transformed journalism, and not always for the better. When every event is reported instantly, the pressure to publish outweighs the obligation to verify. Errors are corrected quietly, if at all, while the original claim continues to circulate. Readers, in turn, mistake speed for accuracy, treating the first account as the true one. The result is a public that knows more and understands less. Slower, more careful reporting may one day become not a luxury but a necessity for a functioning democracy.",
+  },
+
+  // ================================================================ C2
+  {
+    id: "c2-moby",
+    level: "C2",
+    title: "The Whiteness of the Whale",
+    source: "Adaptación libre de Moby-Dick (Herman Melville, dominio público)",
+    body: "It was the whiteness of the whale that above all things appalled me. But how can I hope to explain myself here, and yet, in some dim, random way, explain myself I must, else all these chapters might be naught. For though in many natural objects whiteness refiningly enhances beauty, as if imparting some special virtue of its own, yet there was a subtler mystery in this hue, a pallor that seemed to summon terror rather than delight. Amid the infinite series of the manifold meanings of colour, this one remained, to the end, unaccountable, an elusive spectre that haunted the mind long after the eye had turned away.",
+  },
+  {
+    id: "c2-reputation",
+    level: "C2",
+    title: "On the Vanity of Reputation",
+    source: "Texto original de ensayo a nivel de maestría",
+    body: "Reputation, that most brittle of possessions, is accumulated through years of unremarkable discipline and squandered, with astonishing economy, in a single unguarded moment. The ambitious soon learn that it answers to neither merit nor intention, being fashioned instead in the unreliable imagination of strangers. To devote one's life to its cultivation is therefore to mortgage substance for the sake of appearance. And yet, knowing this, we persist, persuaded that the judgement of others, however capricious, constitutes the only ledger in which our worth may be inscribed.",
   },
   {
     id: "c2-ulysses",
@@ -243,8 +424,47 @@ export const TEXTS: TypingText[] = [
     source: "To the Lighthouse (dominio público)",
     body: "Yes, of course, if it's fine tomorrow, said Mrs Ramsay. But you'll have to be up with the lark, she added. To her son these words conveyed an extraordinary joy, as if it were settled the expedition were bound to take place.",
   },
+  {
+    id: "c2-beauty",
+    level: "C2",
+    title: "The Selves We Reinvent",
+    source: "Texto original de ensayo a nivel de maestría",
+    body: "We speak of the self as though it were a single, continuous thread, yet inspection reveals something more like a braid: many strands, overlaid and rewoven, that merely resemble a unity from a distance. The person who acted generously last year and selfishly yesterday is not a contradiction but a composite, held together less by essence than by memory and narrative. To insist upon a fixed identity is comforting, perhaps necessary, yet it is also a fiction we maintain for the sake of coherence. The question is not whether we are one, but which of our many selves we choose to author.",
+  },
+  {
+    id: "c2-time",
+    level: "C2",
+    title: "The Fluidity of Time",
+    source: "Texto original de ensayo a nivel de maestría",
+    body: "Nothing is more familiar than time and nothing more resistant to definition. It passes, we say, as though it were a river; yet the river exists in time, and so does the metaphor. We measure it with instruments of exquisite precision, while our experience of it stretches and contracts according to attention, fear, or joy. An hour in the company of a bore may last a season, while a season of happiness dissolves like morning mist. Perhaps this discrepancy is not a flaw in perception but a clue: that time, far from being external, is partly the shape of our own awareness.",
+  },
+  {
+    id: "c2-language",
+    level: "C2",
+    title: "The Limits of Language",
+    source: "Texto original de ensayo a nivel de maestría",
+    body: "We trust language to capture the world, yet the most important things slip through its net. Grief, delight, the particular quality of a remembered afternoon—these resist translation into sentences, and the attempt often diminishes them. Writers know this intimately: they labour to say what cannot quite be said, approaching the inexpressible by circling it. Language is not a window onto reality but a rough map, indispensable and incomplete. Its finest achievement is not to reproduce experience but to gesture toward it, trusting the reader to supply what words must leave unsaid.",
+  },
+  {
+    id: "c2-freedom",
+    level: "C2",
+    title: "The Burden of Freedom",
+    source: "Texto original de ensayo a nivel de maestría",
+    body: "Freedom is celebrated as the highest good, yet those who possess it abundantly rarely describe it as light. To choose is to exclude, and every open door is also a wall. The person free of obligations is often free of purpose, drifting where desire happens to blow. Genuine freedom, it turns out, is less the absence of constraints than the deliberate embrace of worthy ones. We become ourselves not by keeping all options open but by binding ourselves to commitments that give our days a shape. The paradox is uncomfortable and, perhaps, unavoidable.",
+  },
+  {
+    id: "c2-irony",
+    level: "C2",
+    title: "In Defence of Irony",
+    source: "Texto original de ensayo a nivel de maestría",
+    body: "Irony has fallen out of fashion, dismissed as the refuge of the cynical and the weapon of the cruel. Yet to abandon it entirely is to surrender to a world of literal certainties, where every statement must be sincere and every disagreement an insult. Irony, at its best, is not the denial of meaning but its layering: a way of holding two truths at once and refusing the comfort of a single one. It preserves the humility of the intelligent and the wit of the wounded. A culture without irony is not virtuous; it is merely simple.",
+  },
 ];
 
 export function getTextsByLevel(level: Level): TypingText[] {
   return TEXTS.filter((text) => text.level === level);
+}
+
+export function getTextById(id: string): TypingText | undefined {
+  return TEXTS.find((text) => text.id === id);
 }

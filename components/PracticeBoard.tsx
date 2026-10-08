@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
-import type { Level, TypingText } from "@/lib/types";
+import type { Level } from "@/lib/types";
 import type { ComputedStats } from "@/lib/text-utils";
 import { TypingTrainer } from "@/components/trainer/TypingTrainer";
 
@@ -10,14 +10,23 @@ import { TypingTrainer } from "@/components/trainer/TypingTrainer";
  * Envuelve la herramienta de tipeo y persiste el resultado en el perfil del
  * usuario autenticado (si hay sesión y base de datos).
  */
-export function PracticeBoard({ level }: { level: Level }) {
+export function PracticeBoard({
+  level,
+  initialTextId,
+}: {
+  level: Level;
+  initialTextId?: string;
+}) {
   const { data: session } = useSession();
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "error"
   >("idle");
 
   const handleFinish = useCallback(
-    async (stats: ComputedStats, text: TypingText) => {
+    async (
+      stats: ComputedStats,
+      text: { id: string; title: string; level: Level },
+    ) => {
       if (!session?.user) {
         setSaveState("idle");
         return;
@@ -62,7 +71,12 @@ export function PracticeBoard({ level }: { level: Level }) {
               : "No se pudo guardar el resultado"}
         </p>
       ) : null}
-      <TypingTrainer initialLevel={level} onFinish={handleFinish} />
+      <TypingTrainer
+        key={initialTextId ?? "default"}
+        initialLevel={level}
+        initialTextId={initialTextId}
+        onFinish={handleFinish}
+      />
     </div>
   );
 }
