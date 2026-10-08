@@ -8,8 +8,6 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import { LEVELS } from "@/lib/levels";
-import { getTextsByLevel } from "@/lib/texts";
 import type { Level, TypingText } from "@/lib/types";
 import {
   computeKeystrokeStats,
@@ -21,12 +19,10 @@ import {
 import { isSpeechSupported, primeVoices, speak, stopSpeaking } from "@/lib/speech";
 import { hasError, playKeySound } from "@/lib/typing-sound";
 import { useI18n } from "@/lib/i18n";
-import { AdSlot } from "@/components/AdSlot";
 import { WordsDisplay } from "./WordsDisplay";
 import { CurrentWordCard } from "./CurrentWordCard";
 import { VirtualKeyboard } from "./VirtualKeyboard";
 import { ResultsModal } from "./ResultsModal";
-import { TextSelector } from "./TextSelector";
 
 type Status = "idle" | "running" | "finished";
 
@@ -37,27 +33,25 @@ function useSpeechSupported(): boolean {
 }
 
 interface TypingTrainerProps {
-  initialLevel?: Level;
-  initialTextId?: string;
-  onFinish?: (stats: ComputedStats, text: Pick<TypingText, "id" | "title" | "level">) => void;
+  text: TypingText;
+  isLastText: boolean;
+  autoContinue: boolean;
+  onToggleAutoContinue: (value: boolean) => void;
+  onFinish: (stats: ComputedStats, text: TypingText) => void;
+  onContinue: () => void;
+  onSkipStats: () => void;
 }
 
 export function TypingTrainer({
-  initialLevel = "A1",
-  initialTextId,
+  text,
+  isLastText,
+  autoContinue,
+  onToggleAutoContinue,
   onFinish,
+  onContinue,
+  onSkipStats,
 }: TypingTrainerProps) {
   const { t } = useI18n();
-  const [level, setLevel] = useState<Level>(initialLevel);
-  const levelTexts = useMemo(() => getTextsByLevel(level), [level]);
-  const startIndex = useMemo(() => {
-    const found = initialTextId
-      ? levelTexts.findIndex((text) => text.id === initialTextId)
-      : 0;
-    return found >= 0 ? found : 0;
-  }, [initialTextId, levelTexts]);
-
-  const [textIndex, setTextIndex] = useState(startIndex);
   const [sentenceIndex, setSentenceIndex] = useState(0);
   const [status, setStatus] = useState<Status>("idle");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,8 +62,6 @@ export function TypingTrainer({
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  const [autoContinue, setAutoContinue] = useState(false);
-  const [hideStats, setHideStats] = useState(false);
   const speechSupported = useSpeechSupported();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,8 +70,7 @@ export function TypingTrainer({
   const correctKeysRef = useRef(0);
   const errorsRef = useRef(0);
 
-  const activeText = levelTexts[textIndex] ?? levelTexts[0];
-  const sentences = useMemo(() => splitSentences(activeText.body), [activeText]);
+  const sentences = useMemo(() => splitSentences(text.body), [text.body]);
   const currentSentence = sentences[sentenceIndex] ?? "";
   const words = useMemo(() => tokenize(currentSentence), [currentSentence]);
   const isLastSentence = sentenceIndex === sentences.length - 1;
@@ -96,6 +87,7 @@ export function TypingTrainer({
   );
   const targetWord = words[currentIndex]?.core ?? "";
   const locked = status !== "finished" && hasError(typed, targetWord);
+  const level = text.level as Level;
 
   useEffect(() => {
     primeVoices();
@@ -110,44 +102,6 @@ export function TypingTrainer({
     return () => window.clearInterval(id);
   }, [status, startedAt]);
 
-  const resetRun = useCallback(() => {
-    stopSpeaking();
-    setStatus("idle");
-    setCurrentIndex(0);
-    setSentenceIndex(0);
-    setTyped("");
-    setTotalKeys(0);
-    setCorrectKeys(0);
-    setErrors(0);
-    totalKeysRef.current = 0;
-    correctKeysRef.current = 0;
-    errorsRef.current = 0;
-    setStartedAt(null);
-    startedAtRef.current = null;
-    setElapsedSeconds(0);
-    setShowResults(false);
-    inputRef.current?.focus();
-  }, []);
-
-  const loadText = useCallback(
-    (index: number) => {
-      const count = levelTexts.length;
-      const safeIndex = ((index % count) + count) % count;
-      setTextIndex(safeIndex);
-      resetRun();
-    },
-    [levelTexts.length, resetRun],
-  );
-
-  const goToLevel = useCallback(
-    (next: Level) => {
-      setLevel(next);
-      setTextIndex(0);
-      resetRun();
-    },
-    [resetRun],
-  );
-
   const finish = useCallback(() => {
     setStatus("finished");
     stopSpeaking();
@@ -155,24 +109,18 @@ export function TypingTrainer({
       startedAtRef.current === null
         ? 1
         : Math.max(Date.now() - startedAtRef.current, 1);
-    onFinish?.(
+    onFinish(
       computeKeystrokeStats({
         totalKeystrokes: totalKeysRef.current,
         correctKeystrokes: correctKeysRef.current,
         errors: errorsRef.current,
         elapsedMs: elapsed,
       }),
-      { id: activeText.id, title: activeText.title, level: activeText.level },
+      text,
     );
+    setShowResults(true);
+  }, [onFinish, text]);
 
-    if (hideStats) {
-      window.setTimeout(() => loadText(textIndex + 1), 500);
-    } else {
-      setShowResults(true);
-    }
-  }, [activeText, hideStats, loadText, onFinish, textIndex]);
-
-  /** Avanza a la siguiente palabra o, si era la última, a la siguiente oración. */
   const completeCurrentWord = useCallback(() => {
     setTyped("");
     if (currentIndex < words.length - 1) {
@@ -229,19 +177,16 @@ export function TypingTrainer({
         setStartedAt(startedAtRef.current);
       }
 
-      // Confirmar con espacio.
       if (/\s$/.test(raw)) {
         attemptAdvanceWord();
         return;
       }
 
-      // Borrar (permite corregir la letra errónea).
       if (raw.length < typed.length) {
         setTyped(raw);
         return;
       }
 
-      // Bloqueo: si ya hay un error sin corregir, no se admite más texto.
       if (locked && raw.length > typed.length) {
         playKeySound("error");
         return;
@@ -254,12 +199,10 @@ export function TypingTrainer({
         registerKeystroke(typedChar, expectedChar);
         setTyped(next);
 
-        // Si la palabra (y era la última de la oración) queda completa.
         if (
           next.toLowerCase() === target.toLowerCase() &&
           currentIndex === words.length - 1
         ) {
-          // La locución y el avance se manejan en completeCurrentWord.
           completeCurrentWord();
         } else if (next.toLowerCase() === target.toLowerCase()) {
           speak(target);
@@ -277,13 +220,6 @@ export function TypingTrainer({
       words,
     ],
   );
-
-  // Auto-continuar tras finalizar, para el flujo sin pausas.
-  useEffect(() => {
-    if (!showResults || !autoContinue || hideStats) return;
-    const id = window.setTimeout(() => loadText(textIndex + 1), 2500);
-    return () => window.clearTimeout(id);
-  }, [showResults, autoContinue, hideStats, loadText, textIndex]);
 
   const stats: ComputedStats = useMemo(
     () =>
@@ -309,56 +245,19 @@ export function TypingTrainer({
 
   return (
     <div className="w-full">
-      {/* Pestañas de nivel MCER */}
-      <div
-        role="tablist"
-        aria-label="Selecciona tu nivel MCER"
-        className="mx-auto mb-4 flex max-w-2xl flex-wrap justify-center gap-1.5 rounded-2xl border border-border-default bg-surface p-1.5"
-      >
-        {LEVELS.map((item) => {
-          const active = item.id === level;
-          return (
-            <button
-              key={item.id}
-              role="tab"
-              aria-selected={active}
-              onClick={() => goToLevel(item.id)}
-              title={item.description}
-              className={
-                "flex flex-1 flex-col items-center rounded-xl px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring " +
-                (active
-                  ? "bg-accent text-white"
-                  : "text-muted-foreground hover:bg-surface-muted hover:text-foreground")
-              }
-            >
-              <span className="font-semibold">{item.id}</span>
-              <span className="hidden text-[0.65rem] sm:block">{item.name}</span>
-            </button>
-          );
-        })}
-      </div>
-
       <div className="mx-auto max-w-3xl">
-        {/* Selector de texto por título */}
-        <TextSelector
-          label={t("practice.selectText")}
-          texts={levelTexts}
-          value={activeText.id}
-          onChange={(id) => {
-            const index = levelTexts.findIndex((text) => text.id === id);
-            if (index >= 0) loadText(index);
-          }}
-        />
-
-        {/* Barra de contexto + estadísticas en vivo */}
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{activeText.title}</span>
-          <span>
-            {t("practice.text")} {textIndex + 1}/{levelTexts.length} ·{" "}
-            {activeText.source}
+        {/* Qué texto se está practicando */}
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+          <span className="inline-flex items-center gap-2">
+            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-contrast">
+              {level}
+            </span>
+            <span className="font-medium text-foreground">{text.title}</span>
           </span>
+          <span className="text-muted-foreground">{text.source}</span>
         </div>
 
+        {/* Estadísticas */}
         <div className="mb-4 grid grid-cols-4 gap-2 text-center">
           <LiveStat label="WPM" value={String(stats.wpm)} />
           <LiveStat label={t("results.accuracy")} value={`${stats.accuracy}%`} />
@@ -369,6 +268,7 @@ export function TypingTrainer({
           <LiveStat label={t("practice.text")} value={`${doneWords}/${totalWords}`} />
         </div>
 
+        {/* Palabra actual */}
         <CurrentWordCard
           word={status === "finished" ? null : words[currentIndex]}
           typed={typed}
@@ -414,7 +314,7 @@ export function TypingTrainer({
           ) : null}
         </div>
 
-        {/* Entrada estricta */}
+        {/* Espacio donde se escribe */}
         <div className="mt-4">
           <label htmlFor="typing-input" className="sr-only">
             {t("practice.current")}
@@ -450,15 +350,15 @@ export function TypingTrainer({
           )}
         </div>
 
-        {/* Teclado virtual guía */}
+        {/* Teclado virtual con manos guía */}
         <div className="mt-5 hidden sm:block">
           <VirtualKeyboard nextChar={nextChar} />
         </div>
 
-        {/* Progreso + controles */}
-        <div className="mt-5 flex items-center justify-between gap-3">
+        {/* Progreso */}
+        <div className="mt-5">
           <div
-            className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted"
+            className="h-2 w-full overflow-hidden rounded-full bg-surface-muted"
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={totalWords}
@@ -472,41 +372,17 @@ export function TypingTrainer({
               }}
             />
           </div>
-          {hideStats ? (
-            <button
-              type="button"
-              onClick={() => setHideStats(false)}
-              className="rounded-lg border border-border-default px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-accent hover:text-accent"
-            >
-              {t("practice.showStats")}
-            </button>
-          ) : null}
-          <button
-            type="button"
-            onClick={() => loadText(textIndex)}
-            className="rounded-lg border border-border-default px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            {t("practice.reset")}
-          </button>
         </div>
-      </div>
-
-      <div className="mx-auto mt-8 max-w-3xl">
-        <AdSlot format="horizontal" label="Publicidad" />
       </div>
 
       <ResultsModal
         open={showResults}
         stats={stats}
-        isLastText={textIndex === levelTexts.length - 1}
+        isLastText={isLastText}
         autoContinue={autoContinue}
-        onToggleAutoContinue={setAutoContinue}
-        onContinue={() => loadText(textIndex + 1)}
-        onSkipStats={() => {
-          setHideStats(true);
-          setShowResults(false);
-          loadText(textIndex + 1);
-        }}
+        onToggleAutoContinue={onToggleAutoContinue}
+        onContinue={onContinue}
+        onSkipStats={onSkipStats}
         onClose={() => setShowResults(false)}
       />
     </div>

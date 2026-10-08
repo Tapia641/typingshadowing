@@ -123,12 +123,74 @@ export const KEY_ROWS: KeyDef[][] = [
     { label: "Ctrl", width: 1.25, modifier: true, finger: "lPinky" },
     { label: "Fn", width: 1.25, modifier: true, finger: "lPinky" },
     { label: "Alt", width: 1.25, modifier: true, finger: "thumb" },
-    { label: "Space", char: " ", finger: "thumb", width: 6.5, modifier: true },
+    { label: "Space", char: " ", finger: "thumb", width: 7.5, modifier: true },
     { label: "Alt", width: 1.25, modifier: true, finger: "thumb" },
     { label: "Fn", width: 1.25, modifier: true, finger: "rPinky" },
     { label: "Ctrl", width: 1.25, modifier: true, finger: "rPinky" },
   ],
 ];
+
+/* ───────────────────────── Geometría del tablero ───────────────────────── */
+
+/** Unidad de ancho de tecla en el viewBox del SVG. */
+export const KEY_UNIT = 10;
+/** Altura de cada tecla. */
+export const KEY_H = 10;
+/** Coordenada Y superior de cada fila. */
+export const ROW_TOPS = [6, 18, 30, 42, 54];
+/** Ancho total del tablero (15 unidades). */
+export const BOARD_W = 150;
+
+export interface LaidOutKey extends KeyDef {
+  row: number;
+  /** Centro X en el viewBox. */
+  cx: number;
+  /** Centro Y en el viewBox. */
+  cy: number;
+  /** Borde izquierdo en el viewBox. */
+  x: number;
+  /** Ancho en el viewBox. */
+  w: number;
+}
+
+/** Calcula la posición de cada tecla dentro del viewBox del tablero. */
+export function layoutKeys(): LaidOutKey[] {
+  const keys: LaidOutKey[] = [];
+  KEY_ROWS.forEach((row, rowIndex) => {
+    const totalUnits = row.reduce((sum, key) => sum + key.width, 0);
+    // Cada fila se centra respecto al ancho total.
+    let x = (BOARD_W - totalUnits * KEY_UNIT) / 2;
+    const y = ROW_TOPS[rowIndex];
+    row.forEach((key) => {
+      const w = key.width * KEY_UNIT;
+      keys.push({
+        ...key,
+        row: rowIndex,
+        x,
+        w,
+        cx: x + w / 2,
+        cy: y + KEY_H / 2,
+      });
+      x += w;
+    });
+  });
+  return keys;
+}
+
+/** Posición de la tecla que produce un carácter (o " " / "Backspace"). */
+export function keyPosition(
+  target: string | null,
+): { cx: number; cy: number; finger?: FingerId } | null {
+  if (!target) return null;
+  const keys = layoutKeys();
+  if (target === "Backspace") {
+    const key = keys.find((k) => k.label === "⌫");
+    return key ? { cx: key.cx, cy: key.cy, finger: key.finger } : null;
+  }
+  const lower = target.toLowerCase();
+  const key = keys.find((k) => k.char === lower);
+  return key ? { cx: key.cx, cy: key.cy, finger: key.finger } : null;
+}
 
 /** Devuelve el dedo asignado a una tecla objetivo (letra, espacio o Backspace). */
 export function fingerForKey(key: string | null): FingerId | null {
