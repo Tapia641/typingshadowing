@@ -21,7 +21,7 @@ export function LevelGrid() {
           <Link
             key={level.id}
             href={`/practicar/${level.id.toLowerCase()}`}
-            className={`group relative overflow-hidden rounded-2xl border border-border-default bg-surface p-6 transition-colors hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
+            className={`surface-card group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}
           >
             <div
               aria-hidden="true"
@@ -29,7 +29,7 @@ export function LevelGrid() {
             />
             <div className="relative">
               <div className="flex items-center justify-between">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-lg font-bold text-white">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-blue-500 text-lg font-bold text-white">
                   {level.id}
                 </span>
                 <span className="rounded-full border border-border-default bg-background/60 px-2.5 py-1 text-xs text-muted-foreground">

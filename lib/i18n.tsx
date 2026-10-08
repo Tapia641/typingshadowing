@@ -68,6 +68,14 @@ const ES: Dict = {
   "hero.accountText":
     "Crea una cuenta gratis con Google para guardar tus estadísticas, ver tu evolución y acceder a tu perfil. Practicar sin cuenta también es posible.",
   "hero.accountCta": "Entrar con Google",
+  "hero.streakBadge": "Nueva función",
+  "hero.streakTitle": "Crea tu racha de práctica",
+  "hero.streakText":
+    "Inicia sesión y practica cada día para encender tu racha. Verás los días seguidos en tu perfil y te mantendrás constante hasta dominar el inglés.",
+  "hero.streakCta": "Empezar mi racha",
+  "hero.streakDays": "días seguidos",
+  "hero.streakToday": "Día listo para empezar",
+  "hero.streakCtaDays": "Empieza tu racha hoy",
 
   "levels.title": "Elige tu nivel",
   "levels.subtitle":
@@ -168,6 +176,15 @@ const ES: Dict = {
   "profile.text": "Texto",
   "profile.practice": "Practicar",
   "profile.signOut": "Cerrar sesión",
+  "profile.streak": "Racha de práctica",
+  "profile.streakCurrent": "Racha actual",
+  "profile.streakBest": "Mejor racha",
+  "profile.streakDays": "días",
+  "profile.streakCalendar": "Últimos 14 días",
+  "profile.streakEmpty":
+    "Practica un texto hoy para encender tu racha. ¡Vuelve mañana para mantenerla!",
+  "profile.streakActive":
+    "¡Racha activa! Practica de nuevo mañana para no perderla.",
 
   "admin.title": "Administración",
   "admin.subtitle": "Usuarios registrados",
@@ -209,6 +226,14 @@ const EN: Dict = {
   "hero.accountText":
     "Create a free account with Google to save your stats, track your progress, and access your profile. You can also practise without an account.",
   "hero.accountCta": "Continue with Google",
+  "hero.streakBadge": "New feature",
+  "hero.streakTitle": "Build your practice streak",
+  "hero.streakText":
+    "Sign in and practise every day to light up your streak. You'll see consecutive days on your profile and stay consistent until you master English.",
+  "hero.streakCta": "Start my streak",
+  "hero.streakDays": "days in a row",
+  "hero.streakToday": "Ready to start your streak",
+  "hero.streakCtaDays": "Start your streak today",
 
   "levels.title": "Choose your level",
   "levels.subtitle":
@@ -307,6 +332,15 @@ const EN: Dict = {
   "profile.text": "Text",
   "profile.practice": "Practise",
   "profile.signOut": "Sign out",
+  "profile.streak": "Practice streak",
+  "profile.streakCurrent": "Current streak",
+  "profile.streakBest": "Best streak",
+  "profile.streakDays": "days",
+  "profile.streakCalendar": "Last 14 days",
+  "profile.streakEmpty":
+    "Practise a text today to light up your streak. Come back tomorrow to keep it!",
+  "profile.streakActive":
+    "Streak active! Practise again tomorrow to keep it alive.",
 
   "admin.title": "Admin",
   "admin.subtitle": "Registered users",

@@ -37,7 +37,7 @@ export default function PracticarPage() {
           <AdSlot format="horizontal" label="Publicidad" />
         </div>
 
-        <section className="mx-auto mt-12 max-w-3xl rounded-2xl border border-border-default bg-surface p-6">
+        <section className="surface-card mx-auto mt-12 max-w-3xl rounded-2xl p-6">
           <h2 className="text-lg font-semibold">Banco de textos</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {TEXTS.length} textos repartidos en {LEVELS.length} niveles. Cada

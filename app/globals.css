@@ -2,32 +2,39 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Paleta inspirada en simple.cruip.com:
+ * fondo gris muy claro, superficies blancas, acento azul con degradado
+ * (blue-500 → blue-600) y bordes gris suaves.
+ */
 :root {
-  --background: #f5f7fa;
-  --foreground: #0f172a;
+  --background: #f9fafb;
+  --foreground: #111827;
   --surface: #ffffff;
-  --surface-muted: #eef2f7;
-  --border-default: #e2e8f0;
-  --muted-foreground: #64748b;
-  --accent: #2563eb;
-  --accent-strong: #1d4ed8;
-  --accent-soft: #dbeafe;
-  --accent-contrast: #1e3a8a;
-  --ring: #3b82f6;
+  --surface-muted: #f3f4f6;
+  --border-default: #e5e7eb;
+  --muted-foreground: #6b7280;
+  --accent: #3b82f6;
+  --accent-strong: #2563eb;
+  --accent-soft: #eff6ff;
+  --accent-contrast: #1e40af;
+  --ring: #93c5fd;
+  --header-glow: rgba(59, 130, 246, 0.35);
 }
 
 .dark {
-  --background: #080a0e;
-  --foreground: #e6e9ee;
-  --surface: #11151b;
-  --surface-muted: #1a202a;
-  --border-default: #262e3a;
-  --muted-foreground: #94a3b8;
-  --accent: #3b82f6;
-  --accent-strong: #60a5fa;
+  --background: #0b1120;
+  --foreground: #e5e7eb;
+  --surface: #111827;
+  --surface-muted: #1f2937;
+  --border-default: #293548;
+  --muted-foreground: #9ca3af;
+  --accent: #60a5fa;
+  --accent-strong: #3b82f6;
   --accent-soft: #172554;
   --accent-contrast: #bfdbfe;
   --ring: #60a5fa;
+  --header-glow: rgba(96, 165, 250, 0.4);
 }
 
 @theme inline {
@@ -53,8 +60,9 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Inter, Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
 }
 
 ::selection {
@@ -62,12 +70,39 @@ body {
   color: #ffffff;
 }
 
+/* Tarjeta estándar del sistema (superficie blanca + sombra suave) */
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+}
+
+/* Botón con degradado azul (blue-500 → blue-600) */
+.btn-accent {
+  background-image: linear-gradient(to top, #2563eb, #3b82f6);
+  background-size: 100% 100%;
+  background-position: bottom;
+  color: #ffffff;
+  transition:
+    background-size 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+.btn-accent:hover {
+  background-size: 100% 160%;
+  box-shadow: 0 10px 20px -8px var(--header-glow);
+}
+.btn-accent:active {
+  transform: translateY(1px);
+}
+
+/* ───────────────────────── Animaciones ───────────────────────── */
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
-
 .animate-shake {
   animation: shake 0.2s ease-in-out;
 }
@@ -76,7 +111,56 @@ body {
   from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
-
 .animate-pop-in {
   animation: pop-in 0.18s ease-out;
+}
+
+/* Reveal al hacer scroll (estilo AOS zoom-y-out) */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px) scale(0.99);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Halo/glow difuminado de fondo */
+.glow {
+  background-image: linear-gradient(to top right, #3b82f6, #1e3a8a);
+  filter: blur(120px);
+  opacity: 0.35;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Línea luminosa que recorre, como el separador animado de la referencia */
+@keyframes line {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(260%); }
+}
+.animate-line {
+  animation: line 10s ease-in-out infinite both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .animate-float,
+  .animate-line {
+    animation: none;
+  }
 }

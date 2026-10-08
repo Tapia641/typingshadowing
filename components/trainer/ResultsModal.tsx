@@ -113,7 +113,7 @@ export function ResultsModal({
         <button
           type="button"
           onClick={onContinue}
-          className="mt-4 w-full rounded-xl bg-accent px-5 py-3 font-semibold text-white transition-colors hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="btn-accent mt-4 w-full rounded-lg px-5 py-3 font-semibold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           {t("results.continue")}
         </button>

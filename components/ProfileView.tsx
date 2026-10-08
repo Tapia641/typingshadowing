@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useI18n } from "@/lib/i18n";
 import { formatDuration } from "@/lib/text-utils";
 import type { ProfileData } from "@/lib/profile";
+import type { StreakInfo } from "@/lib/streak";
 
 type ProfileState =
   | { status: "unauthenticated" }
@@ -42,7 +43,7 @@ export function ProfileView({ state }: { state: ProfileState }) {
     );
   }
 
-  const { results, totals } = state.data;
+  const { results, totals, streak } = state.data;
 
   return (
     <div>
@@ -55,10 +56,14 @@ export function ProfileView({ state }: { state: ProfileState }) {
         </div>
         <Link
           href="/practicar"
-          className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-strong"
+          className="btn-accent rounded-lg px-4 py-2.5 text-sm font-semibold shadow-sm"
         >
           {t("profile.practice")}
         </Link>
+      </div>
+
+      <div className="mt-6">
+        <StreakCard streak={streak} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -114,6 +119,64 @@ export function ProfileView({ state }: { state: ProfileState }) {
           </div>
         )}
       </section>
+    </div>
+  );
+}
+
+function StreakCard({ streak }: { streak: StreakInfo }) {
+  const { t } = useI18n();
+  const { current, best, calendar, activeToday } = streak;
+
+  return (
+    <div className="surface-card rounded-2xl p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-blue-500 text-xl text-white">
+            🔥
+          </span>
+          <div>
+            <h2 className="font-semibold">{t("profile.streak")}</h2>
+            <p className="text-xs text-muted-foreground">
+              {activeToday ? t("profile.streakActive") : t("profile.streakEmpty")}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-4 text-center">
+          <div>
+            <div className="text-2xl font-bold text-accent">{current}</div>
+            <div className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">
+              {t("profile.streakCurrent")}
+            </div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-accent">{best}</div>
+            <div className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">
+              {t("profile.streakBest")}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p className="mt-4 text-[0.65rem] uppercase tracking-wide text-muted-foreground">
+        {t("profile.streakCalendar")}
+      </p>
+      <div className="mt-2 flex justify-between gap-1">
+        {calendar.map((day) => (
+          <span
+            key={day.date}
+            title={day.date}
+            className={
+              "flex h-8 flex-1 items-center justify-center rounded-md text-[0.65rem] font-semibold transition-colors " +
+              (day.active
+                ? "bg-gradient-to-t from-blue-600 to-blue-500 text-white"
+                : "border border-dashed border-border-default text-muted-foreground/40") +
+              (day.isToday ? " ring-2 ring-ring ring-offset-1 ring-offset-surface" : "")
+            }
+          >
+            {new Date(day.date + "T00:00:00").getDate()}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
